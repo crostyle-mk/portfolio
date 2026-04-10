@@ -15,6 +15,7 @@ import WorkGallery from "./pages/WorkGallery";
 function App() {
   return (
     <Router>
+      <div id="top"></div>
       <div className="scroll-smooth antialiased bg-black">
         <Navbar />
         

@@ -130,8 +130,7 @@ const Banner = () => {
         }
       `}</style>
 
-      <section className="luxury-banner" style={{ transform: `translate3d(0, ${scrollY * 0.3}px, 0)` }}>
-        <div className="orb" style={{ transform: `translate3d(0, ${scrollY * 0.4}px, 0)` }} />
+<section id="banner" className="luxury-banner" style={{ transform: `translate3d(0, ${scrollY * 0.3}px, 0)` }}>        <div className="orb" style={{ transform: `translate3d(0, ${scrollY * 0.4}px, 0)` }} />
         <div className="content-wrapper">
           <div style={{ transform: `translate3d(0, ${scrollY * 0.1}px, 0)` }}>
             <div className="premium-badge animate-up">Visual Storyteller</div>

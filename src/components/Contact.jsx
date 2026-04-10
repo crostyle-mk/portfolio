@@ -170,10 +170,10 @@ const Contact = () => {
             <a href="https://wa.me/971544572471" target="_blank" rel="noreferrer" className="social-icon" title="WhatsApp">
               <i className="fa-brands fa-whatsapp"></i>
             </a>
-            <a href="https://linkedin.com/in/mohammed-kareem" target="_blank" rel="noreferrer" className="social-icon" title="LinkedIn">
+            <a href="https://www.linkedin.com/in/mohammed-kareem-photographer/" target="_blank" rel="noreferrer" className="social-icon" title="LinkedIn">
               <i className="fa-brands fa-linkedin-in"></i>
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="social-icon" title="Instagram">
+            <a href="https://www.instagram.com/crostyle.mk/?hl=en://" target="_blank" rel="noreferrer" className="social-icon" title="Instagram">
               <i className="fa-brands fa-instagram"></i>
             </a>
             <a href="https://youtube.com" target="_blank" rel="noreferrer" className="social-icon" title="YouTube">
