@@ -55,6 +55,7 @@ const Category = () => {
 
         @media (min-width: 1025px) {
           .category-item:hover .category-bg {
+          background: #000000;
             opacity: 1;
             transform: scale(1);
           }
@@ -113,8 +114,23 @@ const Category = () => {
 
           .category-bg {
             opacity: 0.7;
-            filter: brightness(0.8)  contrast(1);
+            filter: brightness(0.8)  contrast(1.1);
             transform: scale(1);
+            /* THE CINEMATIC EFFECT: Constant slow zoom */
+    animation: cinematicZoom 20s infinite alternate linear;
+  }
+
+  /* Slow, subtle movement like a movie opening shot */
+  @keyframes cinematicZoom {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.15);
+    }
+  }
+
+
           }
 
           .category-title {
