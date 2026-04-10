@@ -108,11 +108,13 @@ const Category = () => {
 
           .category-item {
             height: 25vh; /* Slightly shorter for better scrolling on phones */
+            background: #000000; /* Ensures no white shows through */
           }
 
           .category-bg {
-            opacity: 0.4;
-            filter: brightness(0.4);
+            opacity: 0.7;
+            filter: brightness(0.8)  contrast(1);
+            transform: scale(1);
           }
 
           .category-title {
@@ -120,12 +122,15 @@ const Category = () => {
             font-size: clamp(1.1rem, 6vw, 1rem);
             color: #ffffff; /* Changed to white for better contrast on mobile overlay */
             letter-spacing: -0.02em; /* Tighter letters to fit more on one line */
+            
           }
 
           .category-meta {
             font-size: 0.55rem;
             letter-spacing: 0.3em;
-            color: #ccc;
+            color: #ffffff;
+            opacity: 0.8;
+
           }
         }
       `}</style>
