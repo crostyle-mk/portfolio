@@ -92,6 +92,10 @@ html {
           list-style: none;
         }
 
+        .navbar-links li {
+  position: relative;
+}
+
         .navbar-links li a {
           font-family: 'Montserrat', sans-serif;
           font-size: 0.68rem;
@@ -101,7 +105,28 @@ html {
           color: rgba(255, 255, 255, 0.8);
           text-decoration: none;
           transition: color 0.25s ease;
+          transition: color 0.3s ease;
+  padding: 4px 0;
         }
+
+        .navbar-links li a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background-color: #fff;
+  transition: width 0.3s ease;
+}
+
+.navbar-links li a:hover {
+  color: #fff;
+}
+
+.navbar-links li a:hover::after {
+  width: 100%;
+}
 
         /* ── HAMBURGER ── */
         .hamburger {
