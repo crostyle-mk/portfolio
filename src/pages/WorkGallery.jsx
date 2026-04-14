@@ -5,70 +5,123 @@ const WorkGallery = () => {
   const { categoryName } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [categoryName]);
+  useEffect(() => { window.scrollTo(0, 0); }, [categoryName]);
 
   const workData = {
     "fashion": {
       title: "Fashion & Lifestyle",
-      description: "High-fashion editorial work.",
-      images: ["/assets/fashion1.jpg", "/assets/fashion2.jpg"]
+      folder: "fashion",
+      prefix: "f",
+      // ==========================================
+      // THIS IS YOUR "PLAYLIST" - TOTAL CONTROL
+      // ==========================================
+      layout: [
+        { type: "grid3", ids: [1, 2, 3] }, // Row 1: Three clean columns
+        { type: "wide", id: 4, isVideo: true }, // Row 2: One big cinematic video
+      ]
     },
-    "events": {
+
+   "events": {
       title: "Events & Portraits",
-      description: "Cinematic event coverage.",
-      images: ["/assets/event1.jpg", "/assets/event2.jpg"]
+      folder: "events",
+      prefix: "e",
+
+      layout: [
+        { type: "wide", id: 1, isVideo: false, pos: "36%" }, // Row 1: Three clean columns
+          { type: "grid3", ids: [2, 3, 4] }, // Row 2: One big cinematic video
+      ]
     },
+
     "product": {
       title: "Product & Brand",
-      description: "Luxury commercial visuals.",
-      images: ["/assets/prod1.jpg", "/assets/prod2.jpg"]
+      folder: "product",
+      prefix: "p",
+
+      layout: [
+        { type: "grid3", ids: [1, 2, 3] }, // Row 1: Three clean columns
+        { type: "wide", id: 4, isVideo: true }, // Row 2: One big cinematic video
+      ]
     },
-    "street": {
+
+     "street": {
       title: "Street & Architecture",
-      description: "Urban moody cinematic environments.",
-      images: ["/assets/street1.jpg", "/assets/street2.jpg"]
+      folder: "street",
+      prefix: "s",
+
+      layout: [
+        { type: "grid3", ids: [1, 2, 3] }, // Row 1: Three clean columns
+        { type: "wide", id: 4, isVideo: true }, // Row 2: One big cinematic video
+      ]
     },
-    "food": {
+
+      "food": {
       title: "Food & Beverage",
-      description: "Commercial culinary photography.",
-      images: ["/assets/food1.jpg", "/assets/food2.jpg"]
+      folder: "food",
+      prefix: "b",
+
+      layout: [
+        { type: "grid3", ids: [1, 2, 3] }, // Row 1: Three clean columns
+        { type: "wide", id: 4, isVideo: true }, // Row 2: One big cinematic video
+      ]
     }
   };
 
   const currentWork = workData[categoryName];
-
-  if (!currentWork) {
-    return (
-      <div className="h-screen flex items-center justify-center text-white bg-black">
-        <p>Category not found. <button onClick={() => navigate('/')} className="underline">Go Home</button></p>
-      </div>
-    );
-  }
+  if (!currentWork) return <div className="bg-black h-screen" />;
 
   return (
-    <div className="min-h-screen bg-black text-white pt-32 pb-20 px-[8%]">
-      <button onClick={() => navigate('/')} className="text-xs tracking-[0.4em] text-gray-500 hover:text-white mb-10">
-        ← BACK TO HOME
-      </button>
-
-      <header className="mb-20">
-        <h1 className="text-5xl md:text-7xl uppercase mb-4" style={{ fontFamily: 'Syncopate' }}>
+    <div className="min-h-screen bg-black text-white pt-32 pb-20 overflow-x-hidden">
+      {/* Header */}
+      <div className="px-[6%] mb-20">
+        <button onClick={() => navigate('/')} className="text-[10px] tracking-[0.5em] text-zinc-500 hover:text-white mb-16 uppercase">
+          ← BACK TO INDEX
+        </button>
+        <h1 className="text-6xl md:text-8xl font-bold uppercase tracking-tighter" style={{ fontFamily: 'Syncopate, sans-serif' }}>
           {currentWork.title}
         </h1>
-        <p className="text-gray-400 tracking-widest text-sm">{currentWork.description}</p>
-      </header>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {currentWork.images.map((img, index) => (
-          <div key={index} className="overflow-hidden bg-zinc-900 aspect-[3/4]">
-            <img 
-              src={img} 
-              alt="portfolio" 
-              className="w-full h-full object-cover" 
-              onError={(e) => { e.target.src = "https://via.placeholder.com/600x800?text=Image+Not+Found"; }}
-            />
+      {/* RENDERER - NO MORE MASONRY LAG */}
+      <div className="flex flex-col gap-y-6"> {/* Tight gap like your photo */}
+        {currentWork.layout.map((row, index) => (
+          <div key={index}>
+            
+            {/* 1. THREE COLUMN GRID (Stills) */}
+            {row.type === "grid3" && (
+              <div className="grid grid-cols-3 gap-6 px-[5%]">
+                {row.ids.map(id => (
+                  <div key={id} className="aspect-[2/3] bg-zinc-900 overflow-hidden">
+                    <img 
+                      src={`/assets/${currentWork.folder}/${currentWork.prefix}${id}.jpg`}
+                      alt="" loading="lazy"
+                      className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* 2. WIDE CINEMATIC HERO (Video or Image) */}
+            {row.type === "wide" && (
+              <div className="w-full px-[5%] bg-zinc-900 h-[50vh]">
+                {row.isVideo ? (
+                  <video 
+                    src={`/assets/${currentWork.folder}/${currentWork.prefix}${row.id}.mp4`}
+                    autoPlay loop muted playsInline preload="metadata"
+                    className="w-full h-full object-cover" 
+                    style={{ objectPosition: `center ${row.pos || '50%'}` }} // Add this
+                  />
+                ) : (
+                  <img 
+                    src={`/assets/${currentWork.folder}/${currentWork.prefix}${row.id}.jpg`}
+                    alt="" loading="lazy"
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: `center ${row.pos || '50%'}` }} // Add this
+                  />
+                )}
+              </div>
+            )}
+
           </div>
         ))}
       </div>
