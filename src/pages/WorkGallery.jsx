@@ -27,7 +27,8 @@ const Grid3Row = ({ ids, folder, prefix, activeIndex }) => (
                   alt=""
                   className="absolute inset-0 w-full h-full object-cover"
                   style={{ 
-                    transition: "opacity 1200ms cubic-bezier(0.4, 0, 0.2, 1)", 
+                    transition: "opacity 1000ms cubic-bezier(0.2, 0, 0.1, 1)", 
+                    transitionDelay: isActive ? `${idx * 150}ms` : "0ms",
                     opacity: isActive ? 1 : 0,
                     zIndex: isActive ? 2 : 1,
                     animation: "cinematicSlow 20s ease-in-out infinite",
@@ -48,18 +49,37 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
   const isContained = fit === "contain";
   return (
     <div className="w-full flex justify-center mb-10 md:mb-16 px-[5%]">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes cinematicPulse {
+          0% { transform: scale(1.01); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1.01); }
+        }
+        .cinematic-media {
+          animation: cinematicPulse 12s ease-in-out infinite;
+          will-change: transform;
+        }
+      `}} />
+
       <div className={`relative overflow-hidden shadow-2xl transition-all duration-1000 
         ${isContained ? "w-auto h-[30vh] md:h-[60vh]" : "w-full aspect-video md:aspect-auto md:h-[60vh] bg-zinc-950"}`}>
         {isVideo ? (
           <video src={`/assets/${folder}/${prefix}${id}.mp4`} 
           autoPlay loop muted playsInline 
-          className="h-full w-full object-cover" 
-          style={{ objectPosition: `center ${pos || "50%"}` }} 
+          className="h-full w-full object-cover cinematic-media" 
+         style={{ 
+              objectPosition: `center ${pos || "50%"}`,
+              /* Inline fallback to ensure it starts slightly zoomed */
+              transform: 'scale(1)' 
+            }} 
           />
         ) : (
           <img src={`/assets/${folder}/${prefix}${id}.jpg`} 
-          className="h-full w-full object-cover" 
-          style={{ objectPosition: `center ${pos || "50%"}` }} 
+          className="h-full w-full object-cover cinematic-media" 
+         style={{ 
+              objectPosition: `center ${pos || "50%"}`,
+              transform: 'scale(1)' 
+            }}
           alt="" 
           />
         )}
@@ -70,7 +90,7 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
 
 const SlideshowRow = ({ images, activeIndex, folder, prefix }) => (
   <div className="w-full px-[5%] mb-20">
-    <div className="relative w-full h-[40vh] md:h-[80vh] overflow-hidden bg-black shadow-2xl">
+    <div className="relative w-full h-[30vh] md:h-[80vh] overflow-hidden bg-black shadow-2xl">
       {images.map((img, i) => {
         const isCurrent = i === activeIndex % images.length;
         return (
@@ -128,8 +148,16 @@ const WorkGallery = () => {
       layout: [
         { type: "wide", id: 1, isVideo: true, fit: "cover" }, // Tall, contained look
         { type: "grid3", ids: [2, 3, 4] },
-      ],
+         { 
+      type: "slideshow", 
+      images: [
+        { id: 5, pos: "center" },
+        { id: 6, pos: "center" },
+        { id: 7, pos: "center" }
+      ] 
     },
+  ],
+},
 
 
 
@@ -161,10 +189,17 @@ const WorkGallery = () => {
       folder: "street",
       prefix: "s",
       layout: [
-        { type: "grid3", ids: [1, 2, 3] },
-        { type: "wide", id: 4, isVideo: true },
-      ],
+        { type: "wide", id: 1, isVideo: false, fit: "cover" }, // Tall, contained look
+        {
+      type: "grid3",
+      ids: [
+        [2, 5], // Wrap in brackets to enable the cycling logic
+        [3, 7],
+        [4, 6]
+      ]
     },
+  ],
+},
 
 
 
