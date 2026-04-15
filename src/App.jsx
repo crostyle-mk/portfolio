@@ -10,7 +10,7 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 
 // --- IMPORT YOUR NEW GALLERY PAGE ---
-import WorkGallery from "./pages/WorkGallery.jsx";
+import WorkGallery from "./pages/WorkGallery";
 
 function App() {
   return (
