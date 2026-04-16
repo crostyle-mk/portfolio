@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Category = () => {
+
   const categories = [
     { 
       id: 1, 
@@ -52,7 +52,9 @@ const Category = () => {
     } 
   ];
 
-  return (
+  const Category = () => {
+    
+    return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Outfit:wght@100;300;400&display=swap');
@@ -160,6 +162,7 @@ const Category = () => {
                 <video 
                   src={cat.videoSrc} 
                   poster={cat.img}
+                  preload="metadata"
                   autoPlay loop muted playsInline
                   className="category-media"
                   style={{ objectPosition: cat.pos }}

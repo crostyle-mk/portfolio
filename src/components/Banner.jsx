@@ -130,7 +130,19 @@ const Banner = () => {
         }
       `}</style>
 
-<section id="banner" className="luxury-banner" style={{ transform: `translate3d(0, ${scrollY * 0.3}px, 0)` }}>        <div className="orb" style={{ transform: `translate3d(0, ${scrollY * 0.4}px, 0)` }} />
+<section id="banner" className="luxury-banner" style={{ transform: `translate3d(0, ${scrollY * 0.3}px, 0)` }}> 
+   {/* 1. Background Image Layer */}
+  <div className="absolute inset-0 z-0">
+    <img 
+      src="/assets/me/portrait-shot.png" 
+      className="h-full w-full object-contain banner-image ml-auto"
+      alt="Mohammed Kareem"
+      style={{ opacity: 0.9 }} 
+    />
+    <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/20 to-transparent" />
+  </div>
+
+  <div className="orb" style={{ transform: `translate3d(0, ${scrollY * 0.4}px, 0)`, position: 'absolute', inset: 0, zIndex: 1 }} />
         <div className="content-wrapper">
           <div style={{ transform: `translate3d(0, ${scrollY * 0.1}px, 0)` }}>
             <div className="premium-badge animate-up">Visual Storyteller</div>
