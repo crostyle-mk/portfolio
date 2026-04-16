@@ -66,7 +66,7 @@ const Contact = () => {
           height: clamp(50px, 8vw, 85px);
           background: rgba(255, 255, 255, 0.15); /* Glass-like circular background */
           color: #ffffff; 
-          font-size: clamp(1.2rem, 9vw, 2rem); 
+          font-size: clamp(1.2rem, 3vw, 2rem); 
           border-radius: 50%;
           transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
           text-decoration: none;

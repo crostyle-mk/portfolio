@@ -13,7 +13,7 @@ const Hero = () => {
   /* --- DESKTOP (UNTOUCHED) --- */
   .parallax-wrapper {
     position: relative;
-    height: 150vh; 
+    height: 100vh; 
     width: 100%;
   }
 
