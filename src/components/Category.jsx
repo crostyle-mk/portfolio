@@ -59,8 +59,9 @@ const Category = () => {
 
         .categories-container {
           background: #000000;
-          padding: 80px 0;
+          padding: 0 0 80px 0;
           margin: 0;
+          margin-top: 120px;
         }
 
         .category-item {
@@ -141,6 +142,7 @@ const Category = () => {
             mask-image: linear-gradient(to left side, rgba(0,0,0,1) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%);
             -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 100%, rgba(0,0,0,0) 100%);
           }
+          .categories-container { margin-top: 60px; }
           .category-content { margin-top: auto; padding-bottom: 100px; padding-left: 6%; }
           .category-title { font-size: 1.2rem; }
           .category-meta { font-size: 0.60rem; letter-spacing: 0.5em; } 
