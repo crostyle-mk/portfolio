@@ -59,7 +59,7 @@ html {
         }
 
         .navbar-inner {
-          max-width: 1280px;
+          max-width: 1500px;
           margin: 0 auto;
           padding: 0 40px;
           height: 68px;
@@ -71,7 +71,7 @@ html {
         /* ── LOGO ── */
         .navbar-logo {
           font-family: 'Montserrat', sans-serif;
-          font-size: 0.68rem;
+          font-size: 0.70rem;
           font-weight: 500;
           color: #fff;
           letter-spacing: 0.12em;
@@ -98,7 +98,7 @@ html {
 
         .navbar-links li a {
           font-family: 'Montserrat', sans-serif;
-          font-size: 0.68rem;
+          font-size: clamp(0.7rem, 3vw, 0.03rem); 
           font-weight: 500;
           letter-spacing: 0.28em;
           text-transform: uppercase;

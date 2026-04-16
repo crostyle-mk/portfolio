@@ -74,7 +74,7 @@ const Banner = () => {
         }
 
         .premium-badge {
-          font-size: clamp(0.7rem, 1.5vw, 3rem);
+          font-size: clamp(0.5rem, 1.5vw, 1.5rem);
           letter-spacing: 0.5em;
           color: #a855f7;
           text-transform: uppercase;
