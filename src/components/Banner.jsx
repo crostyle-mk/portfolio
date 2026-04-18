@@ -112,16 +112,18 @@ const Banner = () => {
 
         /* --- MOBILE ONLY (MAX 768px) --- */
         @media (max-width: 768px) {
-          .luxury-banner { min-height: 50vh; }
+          .luxury-banner { min-height: 100dvh; 
+          contain: paint;     /* Boosts mobile rendering performance */
+  }
           
           .main-name {
             font-size: clamp(1.4rem, 8vw, 1.6rem); 
-            letter-spacing: -0.04em;
+            letter-spacing: -0.02em;
           }
 
           .role-title {
             font-size: clamp(0.7rem, 4vw, 0.8rem);
-            letter-spacing: 0.20em;
+            letter-spacing: 0.15em;
           }
           
           .content-wrapper { padding: 0 15px; }
@@ -135,7 +137,9 @@ const Banner = () => {
   <div className="absolute inset-0 z-0">
     <img 
       src="/assets/me/portrait-shot.png" 
-      className="h-full w-full object-contain banner-image ml-auto"
+      loading="eager"           // Tells browser to load this FIRST
+  fetchpriority="high"
+      className="h-full w-full object-contain banner-image ml-auto text-transparent"
       alt="Mohammed Kareem"
       style={{ opacity: 0.9 }} 
     />
