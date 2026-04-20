@@ -4,94 +4,93 @@ const About = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@100;300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;600&display=swap');
 
+        /* ── MATCHES CONTACT CONTAINER ── */
         .about-container {
-          background: #000;
-          color: #fff;
-          /* ── SIGNIFICANTLY REDUCED VERTICAL PADDING ── */
-          padding: 5px 10%; 
           position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          /* Removed 40vh to prevent forced empty space */
-          min-height: auto; 
-          text-align: center;
           width: 100%;
+          min-height: 45vh; 
+          display: flex;
+          flex-direction: column;
+          align-items: center; 
+          justify-content: center;
+          padding: 100px 0 40px 0; 
+          background: #000000; 
           overflow: hidden;
         }
 
-        /* ── LARGE OUTLINE BACKGROUND TEXT ── */
-        .bg-outline-text {
-          position: absolute;
-          font-family: 'Cinzel', serif;
-          font-size: 15vw;
-          font-weight: 700;
-          color: transparent;
-          -webkit-text-stroke: 1px rgba(255, 255, 255, 0.03);
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          white-space: nowrap;
-          pointer-events: none;
-          z-index: 0;
-        }
-
+        /* ── MATCHES CONTACT WRAPPER (90% width, 2500px max) ── */
         .about-wrapper {
           position: relative;
-          z-index: 1;
-          max-width: 900px; 
+          z-index: 2;
+          width: 90%; 
+          max-width: 2500px; 
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
         }
 
-        /* ── CENTERED HEADING ── */
+        /* ── HEADING: PINNED LEFT (Matches .cta-label) ── */
         .about-title {
-            font-family: 'Syncopate', sans-serif;
-          font-size: clamp(1.2rem, 2.5vw, 2.2rem);
-          line-height: 1;
+          font-family: 'Syncopate', sans-serif;
+          font-size: clamp(2rem, 2vw, 6rem); /* Identical to Contact clamp */
+          font-weight: 400;
+          letter-spacing: 0.4em; /* Identical spacing */
           text-transform: uppercase;
-          /* Tightened gap between Title and Paragraph */
-          margin-bottom: 15px; 
-          letter-spacing: 0.2em;
+          color: #ffffff; 
+          margin-bottom: 80px; /* Identical spacing before content */
+          text-align: left; 
+          width: 100%;
         }
 
-        /* ── CENTERED DESCRIPTION ── */
+        /* ── CONTENT: PROFESSIONAL CINEMATIC WIDTH ── */
         .body-para {
           font-family: 'Inter', sans-serif;
-          font-size: clamp(0.85rem, 1.3vw, 1rem);
-          line-height: 1.6;
-          font-weight: 300;
-          color: rgba(255, 255, 255, 0.6);
-          margin: 0 auto;
-          letter-spacing: 0.02em;
+          font-size: clamp(1rem, 1.4vw, 1.1rem);
+          line-height: 1.8;
+          font-weight: 300; 
+          color: rgba(255, 255, 255, 0.7); 
+          text-align: left;
+          max-width: 1500px; /* Professional reading width for desktop */
+          margin-bottom: 120px; /* Matches the bottom margin of Contact's icons */
         }
 
-        .highlight {
-          color: #a855f7;
+        .highlight-white {
+          color: #ffffff;
+          font-weight: 500;
         }
 
+        /* ── MOBILE OPTIMIZATION: MATCHES CONTACT MEDIA QUERIES ── */
         @media (max-width: 768px) {
-          .about-container {
-            padding: 30px 5%;
+          .about-container { 
+            padding: 80px 0 40px 0; 
           }
-          .bg-outline-text {
-            font-size: 25vw;
+
+          .about-title {
+            text-align: center; /* Mirrors Contact's mobile center alignment */
+            font-size: 1.03rem;
+            margin-bottom: 50px;
+          }
+
+          .body-para {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            text-align: left;
+            margin-bottom: 80px;
           }
         }
       `}</style>
 
       <section id="about" className="about-container">
-        <div className="bg-outline-text">CREATIVE</div>
-
         <div className="about-wrapper">
-          <h2 className="about-title highlight">About Me</h2>
+          {/* Mirrors "Contact" Heading precisely */}
+          <h2 className="about-title">About me</h2>
           
           <p className="body-para">
-            Creative and detail-oriented Photographer and Videographer with 
-            over <strong>3 years of professional experience</strong> in fashion, event, product, portrait, and 
-            landscape photography. Proven ability to produce high-quality visual content that 
-            enhances brand image and engagement. Experienced in both studio and outdoor 
-            environments, with strong post-production and storytelling skills.
+           A Dubai-based photographer and videographer capturing visuals across fashion, events, products, and portraits.
+           Working in Dubai since 2022, with a focus on creating high-quality content that blends detail, composition, and storytelling.
+           Each project is approached with a cinematic eye, delivering visuals that elevate both moments and brands. 
           </p>
         </div>
       </section>

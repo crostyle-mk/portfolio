@@ -40,7 +40,7 @@ const Contact = () => {
         .cta-label {
           font-family: 'Syncopate', sans-serif;
           font-size: clamp(2rem, 2vw, 6rem);
-          font-weight: 700;
+          font-weight: 400;
           letter-spacing: 0.5em;
           text-transform: uppercase;
           color: #ffffff; 
@@ -99,7 +99,7 @@ const Contact = () => {
 
         @media (max-width: 768px) {
           .contact-container { 
-            padding: 80px 0 40px 0; 
+            padding: 10px 0 10px 0; 
           }
 
           .cta-label {
@@ -132,7 +132,7 @@ const Contact = () => {
 
       <section id="contact" className="contact-container">
         <div className="contact-wrapper">
-          <span className="cta-label">Connect</span>
+          <span className="cta-label">Contact</span>
           
           <div className="social-icons">
             <a href="mailto:kareembuflyzz@gmail.com" className="social-icon" title="Email">

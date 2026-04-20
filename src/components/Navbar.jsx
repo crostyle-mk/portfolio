@@ -8,7 +8,8 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", target: "#top"},
     { name: "Works", target: "#category" },
-    { name: "Connect", target: "#contact" },
+    { name: "About", target: "#about" },
+    { name: "Contact", target: "#contact" },
   ];
 
   useEffect(() => {

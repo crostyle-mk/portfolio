@@ -25,6 +25,10 @@ const Banner = () => {
           overflow: hidden;
           color: white;
           font-family: 'Outfit', sans-serif;
+          -webkit-backface-visibility: hidden; /* Fixes flickering on iPhone */
+  backface-visibility: hidden;
+  will-change: transform; /* Prepares the GPU for smooth movement */
+  touch-action: pan-y;
         }
 
         .content-wrapper {
@@ -55,7 +59,7 @@ const Banner = () => {
           line-height: 1.1;
           margin: 0;
           text-transform: uppercase;
-          background: linear-gradient(to bottom, #ffffff 40%, #666666 100%);
+          background: linear-gradient(to bottom, #ffffff 50%, #666666 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           animation-delay: 0.6s;
@@ -76,7 +80,7 @@ const Banner = () => {
         .premium-badge {
           font-size: clamp(0.5rem, 1.5vw, 1.5rem);
           letter-spacing: 0.5em;
-          color: #a855f7;
+          color: #ffffff;
           text-transform: uppercase;
           margin-bottom: 30px;
           animation-delay: 0.3s;
@@ -115,9 +119,11 @@ const Banner = () => {
           .luxury-banner { min-height: 100dvh; 
           contain: paint;     /* Boosts mobile rendering performance */
   }
-          
+          .premium-badge {
+          margin-bottom: 15px;
+          }
           .main-name {
-            font-size: clamp(1.4rem, 8vw, 1.6rem); 
+            font-size: clamp(1.4rem, 8vw, 1.5rem); 
             letter-spacing: -0.02em;
           }
 
@@ -128,11 +134,11 @@ const Banner = () => {
           
           .content-wrapper { padding: 0 15px; }
 
-          .description-box { font-size: 0.9rem; max-width: 90%; }
+          .description-box { font-size: 0.8rem; max-width: 80%; }
         }
       `}</style>
 
-<section id="banner" className="luxury-banner" style={{ transform: `translate3d(0, ${scrollY * 0.3}px, 0)` }}> 
+<section id="banner" className="luxury-banner" style={{ transform: window.innerWidth > 768 ? `translate3d(0, ${scrollY * 0.3}px, 0)` : 'none' }}> 
    {/* 1. Background Image Layer */}
   <div className="absolute inset-0 z-0">
     <img 
@@ -149,7 +155,7 @@ const Banner = () => {
   <div className="orb" style={{ transform: `translate3d(0, ${scrollY * 0.4}px, 0)`, position: 'absolute', inset: 0, zIndex: 1 }} />
         <div className="content-wrapper">
           <div style={{ transform: `translate3d(0, ${scrollY * 0.1}px, 0)` }}>
-            <div className="premium-badge animate-up">Visual Storyteller</div>
+            <div className="premium-badge animate-up">i am</div>
           </div>
 
           <div style={{ transform: `translateY(${scrollY * 0.2}px)`, opacity: 1 - scrollY/700 }}>
