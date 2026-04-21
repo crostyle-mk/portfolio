@@ -15,7 +15,7 @@ const About = () => {
           flex-direction: column;
           align-items: center; 
           justify-content: center;
-          padding: 100px 0 40px 0; 
+          padding: 120px 0 40px 0; 
           background: #000000; 
           overflow: hidden;
         }
@@ -49,6 +49,7 @@ const About = () => {
           font-family: 'Inter', sans-serif;
           font-size: clamp(1rem, 1.4vw, 1.1rem);
           line-height: 1.8;
+          letter-spacing: 0.1em; 
           font-weight: 300; 
           color: rgba(255, 255, 255, 0.7); 
           text-align: left;
@@ -74,9 +75,10 @@ const About = () => {
           }
 
           .body-para {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            text-align: left;
+            font-size: 0.70rem;
+            line-height: 1.3;
+            letter-spacing: 0.1em; 
+            text-align: center;
             margin-bottom: 80px;
           }
         }
@@ -88,9 +90,13 @@ const About = () => {
           <h2 className="about-title">About me</h2>
           
           <p className="body-para">
-           A Dubai-based photographer and videographer capturing visuals across fashion, events, products, and portraits.
-           Working in Dubai since 2022, with a focus on creating high-quality content that blends detail, composition, and storytelling.
-           Each project is approached with a cinematic eye, delivering visuals that elevate both moments and brands. 
+           I am a Dubai-based photographer and videographer, working across fashion, events, and creative projects since 2022.
+            My work focuses on bringing a cinematic quality to every frame, with strong attention to composition, lighting, and overall visual balance.
+             Experienced in both studio and outdoor environments, I work comfortably in collaborative settings, contributing as part of a team to deliver strong visual outcomes.
+              Each project is an opportunity to create something visually strong and meaningful, both for people and brands.
+               My approach is simple — understand the moment, frame it well, and bring it to life through editing. 
+              I believe in taking the time to do things right, avoiding rushed work and focusing on creating visuals that are clean, detailed, and thoughtfully crafted.
+
           </p>
         </div>
       </section>

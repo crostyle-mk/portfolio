@@ -176,6 +176,65 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
 
 };
 
+const GridComparisonRow = ({ items, folder, prefix }) => {
+  return (
+    <div className="grid grid-cols-3 gap-2 md:gap-8 px-[2%] md:px-[5%] mb-12">
+      {items.map((item, idx) => (
+        <div key={idx} className="flex flex-col gap-2">
+          <div className="relative aspect-[2/3] bg-zinc-950 overflow-hidden group">
+             <BeforeAfterSlider 
+                before={`${prefix}${item.before}.jpg`} 
+                after={`${prefix}${item.after}.jpg`} 
+                folder={folder}
+             />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Internal Slider Logic for the Grid
+const BeforeAfterSlider = ({ before, after, folder }) => {
+  const [sliderPos, setSliderPos] = useState(50);
+
+  const handleMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX || (e.touches && e.touches[0].clientX)) - rect.left) / rect.width * 100;
+    setSliderPos(Math.max(0, Math.min(100, x)));
+  };
+
+  return (
+    <div 
+      className="relative w-full h-full cursor-col-resize select-none"
+      onMouseMove={handleMove}
+      onTouchMove={handleMove}
+    >
+      {/* After Image */}
+      <img 
+        src={`/assets/${folder}/${after}`} 
+        alt="" 
+        className="absolute inset-0 w-full h-full object-cover" 
+      />
+      {/* Before Image */}
+      <div 
+        className="absolute inset-0 w-full h-full z-10"
+        style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
+      >
+        <img 
+          src={`/assets/${folder}/${before}`} 
+          alt="" 
+          className="w-full h-full object-cover" 
+        />
+      </div>
+      {/* Line */}
+      <div 
+        className="absolute top-0 bottom-0 w-[1px] bg-white/40 z-20"
+        style={{ left: `${sliderPos}%` }}
+      />
+    </div>
+  );
+};
 
 
 const SlideshowRow = ({ images, activeIndex, folder, prefix }) => (
@@ -356,7 +415,19 @@ const WorkGallery = () => {
 
 
 
-        { type: "slideshow", images: [{ id: 5, pos: "center" }, { id: 6, pos: "center" }] },
+        { type: "slideshow", images: [{ id: 5, pos: "center" }, { id: 6, pos: "center" }
+
+        ] 
+      },
+
+      { 
+      type: "gridComparison", 
+      items: [
+        { before: 17, after: 16 }, // Column 1: Before f4, After f5
+        { before: 19, after: 18 }, // Column 2: Before f6, After f7
+        { before: 21, after: 20 }  // Column 3: Before f8, After f9
+      ] 
+    },
 
 
 
@@ -549,6 +620,8 @@ const WorkGallery = () => {
             case "wide": return <WideRow key={index} {...row} {...commonProps} />;
 
             case "slideshow": return <SlideshowRow key={index} {...row} {...commonProps} activeIndex={activeIndex} />;
+            
+            case "gridComparison": return <GridComparisonRow key={index} {...row} {...commonProps} />;
 
             default: return null;
 
