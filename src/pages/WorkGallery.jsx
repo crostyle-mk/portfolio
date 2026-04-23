@@ -50,6 +50,8 @@ const Grid3Row = ({ ids, folder, prefix, activeIndex }) => (
 
                   src={`/assets/${folder}/${prefix}${id}.jpg`}
 
+                  loading="lazy"
+
                   alt=""
 
                   className="absolute inset-0 w-full h-full object-cover"
@@ -250,6 +252,7 @@ const WideVideo = ({ id, isVideo, pos, fit, folder, prefix }) => {
           <video 
             src={`/assets/${folder}/${fileName}.mp4`}
             autoPlay loop muted playsInline
+            preload="metadata"
             className="h-full w-full object-cover" // Removed cinematic-media class
             style={{ 
               objectPosition: `center ${pos || "50%"}`,
@@ -391,7 +394,7 @@ const WorkGallery = () => {
 
     layout: [
 
-        { type: "widevideo", id: 1 , isVideo: false, pos: "90%"},
+        { type: "widevideo", id:  1 , isVideo: false, pos: "90%"},
 
         {
 
