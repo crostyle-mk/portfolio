@@ -18,7 +18,7 @@ const Grid3Row = ({ ids, folder, prefix, activeIndex }) => (
 
         0% { transform: scale(1); }
 
-        50% { transform: scale(1.05); }
+        50% { transform: scale(1.03); }
 
         100% { transform: scale(1); }
 
@@ -64,9 +64,9 @@ const Grid3Row = ({ ids, folder, prefix, activeIndex }) => (
 
                     zIndex: isActive ? 2 : 1,
 
-                    animation: "cinematicSlow 20s ease-in-out infinite",
+                    animation: "cinematicSlow 10s ease-in-out infinite",
 
-                    animationDelay: `${idx * 2}s`, // Each column starts 2 seconds apart
+                    animationDelay: `${idx * 1}s`, // Each column starts 2 seconds apart
 
                     willChange: "opacity, transform"
 
@@ -176,6 +176,7 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
 
 };
 
+
 const GridComparisonRow = ({ items, folder, prefix }) => {
   return (
     <div className="grid grid-cols-3 gap-2 md:gap-8 px-[2%] md:px-[5%] mb-12">
@@ -190,6 +191,83 @@ const GridComparisonRow = ({ items, folder, prefix }) => {
           </div>
         </div>
       ))}
+    </div>
+  );
+};
+
+const WideSlideshowRow = ({ images, activeIndex, folder, prefix, pos }) => {
+  return (
+    <div className="w-full flex justify-center mb-10 md:mb-16 px-[5%]">
+      {/* Container dimensions and shadow match your WideRow exactly */}
+      <div className="relative overflow-hidden shadow-2xl w-full aspect-video md:aspect-auto md:h-[60vh] bg-zinc-950">
+        {images.map((imgId, i) => {
+          // Logic to determine which image is currently active
+          const isCurrent = i === activeIndex % images.length;
+          
+          return (
+            <div 
+              key={imgId} 
+              className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+              style={{ 
+                zIndex: isCurrent ? 20 : 10, 
+                opacity: isCurrent ? 1 : 0,
+                willChange: "opacity, transform"
+              }}
+            >
+              <img 
+                src={`/assets/${folder}/${prefix}${imgId}.jpg`}
+                alt=""
+                className="h-full w-full object-cover"
+                style={{
+                  objectPosition: `center ${pos || "50%"}`,
+                  /* Applying your WideRow's cinematicPulse for that breathing effect */
+                  animation: isCurrent ? "cinematicPulse 12s ease-in-out infinite" : "none",
+                  imageRendering: "high-quality",
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: 'translateZ(0) scale(1)', // Forces GPU acceleration
+                  willChange: "transform, opacity"
+                }}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+const WideVideo = ({ id, isVideo, pos, fit, folder, prefix }) => {
+  const isContained = fit === "contain";
+  const fileName = typeof id === "string" ? id : `${prefix}${id}`;
+
+  return (
+    <div className="w-full flex justify-center mb-10 md:mb-16 px-[5%]">
+      <div className={`relative overflow-hidden shadow-2xl transition-all duration-1000
+        ${isContained ? "w-auto h-[30vh] md:h-[60vh]" : "w-full aspect-video md:aspect-auto md:h-[60vh] bg-zinc-950"}`}>
+        
+        {isVideo ? (
+          <video 
+            src={`/assets/${folder}/${fileName}.mp4`}
+            autoPlay loop muted playsInline
+            className="h-full w-full object-cover" // Removed cinematic-media class
+            style={{ 
+              objectPosition: `center ${pos || "50%"}`,
+              imageRendering: "high-quality" // Keeps your edits sharp
+            }}
+          />
+        ) : (
+          <img 
+            src={`/assets/${folder}/${fileName}.jpg`}
+            className="h-full w-full object-cover" // Removed cinematic-media class
+            style={{ 
+              objectPosition: `center ${pos || "50%"}`,
+              imageRendering: "high-quality"
+            }}
+            alt=""
+          />
+        )}
+      </div>
     </div>
   );
 };
@@ -313,7 +391,7 @@ const WorkGallery = () => {
 
     layout: [
 
-        { type: "wide", id: 1 , isVideo: false, pos: "90%"},
+        { type: "widevideo", id: 1 , isVideo: false, pos: "90%"},
 
         {
 
@@ -323,13 +401,14 @@ const WorkGallery = () => {
 
         [4, 5, 9], // Wrap in brackets to enable the cycling logic
 
-        [10, 2, 6],
+        [8, 2, 6],
 
-        [7, 8, 3]
+        [7, 10, 3]
 
       ]
 
     },
+    { type: "widevideo", id: 11, isVideo: true, fit: "cover", pos: "60%" }, 
 
   ],
 
@@ -395,8 +474,11 @@ const WorkGallery = () => {
 
       layout: [
 
-        { type: "wide", id: 1, isVideo: false, pos: "36%" },
-
+       { 
+      type: "wideSlideshow", 
+      images: [1, 22, 23, 24], // These f1, f2, f3 images will now cycle automatically
+      pos: "50%" // Adjust vertical centering
+    },
        {
 
         type: "grid3",
@@ -519,7 +601,7 @@ const WorkGallery = () => {
 
   useEffect(() => {
 
-    const timer = setInterval(() => setActiveIndex((prev) => prev + 1), 5000);
+    const timer = setInterval(() => setActiveIndex((prev) => prev + 1), 3000);
 
     return () => clearInterval(timer);
 
@@ -622,6 +704,11 @@ const WorkGallery = () => {
             case "slideshow": return <SlideshowRow key={index} {...row} {...commonProps} activeIndex={activeIndex} />;
             
             case "gridComparison": return <GridComparisonRow key={index} {...row} {...commonProps} />;
+
+            case "wideSlideshow": 
+        return <WideSlideshowRow key={index} {...row} {...commonProps} activeIndex={activeIndex} />;
+
+        case "widevideo": return <WideVideo key={index} {...row} {...commonProps} />;
 
             default: return null;
 
