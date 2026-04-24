@@ -45,6 +45,8 @@ const Grid3Row = ({ ids, folder, prefix, activeIndex }) => (
 
                   src={`/assets/${folder}/${prefix}${id}.jpg`}
 
+                  loading="lazy"
+
                   alt=""
 
                   className="absolute inset-0 w-full h-full object-cover"
@@ -140,6 +142,8 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
         ) : (
 
           <img src={`/assets/${folder}/${prefix}${id}.jpg`}
+
+          loading="lazy"
 
           className="h-full w-full object-cover cinematic-media"
 
@@ -276,6 +280,8 @@ const BeforeAfterSlider = ({ before, after, folder }) => {
       <img
 
         src={`/assets/${folder}/${after}`}
+        
+        loading="lazy"
 
         alt=""
 
@@ -296,6 +302,8 @@ const BeforeAfterSlider = ({ before, after, folder }) => {
         <img
 
           src={`/assets/${folder}/${before}`}
+
+          loading="lazy"
 
           alt=""
 
@@ -360,6 +368,8 @@ const SlideshowRow = ({ images, activeIndex, folder, prefix }) => (
             <img
 
               src={`/assets/${folder}/${prefix}${img.id}.jpg`}
+
+              loading="lazy"
 
               alt=""
 
@@ -459,8 +469,18 @@ const WorkGallery = () => {
 
         { type: "wide", id: 1, isVideo: true, fit: "cover" }, // Tall, contained look
 
-        { type: "grid3", ids: [2, 3, 4] },
+        {
 
+      type: "grid3",
+
+      ids: [
+        [4, 9,], // Wrap in brackets to enable the cycling logic
+        [3, 2,],
+        [10, 8,]
+
+      ]
+
+    },
          {
 
       type: "slideshow",
@@ -541,7 +561,11 @@ const WorkGallery = () => {
 
       layout: [
 
-        { type: "wide", id: 1, isVideo: false, fit: "cover" }, // Tall, contained look
+         { 
+      type: "wideSlideshow", 
+      images: [1, 8],
+      pos: "50%" 
+    },
 
         {
       type: "grid3",

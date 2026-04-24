@@ -165,7 +165,7 @@ const Banner = () => {
 
           <div style={{ transform: `translateY(${scrollY * 0.15}px)`, opacity: 1 - scrollY/800 }}>
             <p className="description-box animate-up">
-              Dubai-based Photographer & Videographer. Crafting cinematic visuals for luxury brands.
+              Dubai-based Photographer & Videographer. Crafting cinematic visuals.
             </p>
             <a href="#category" className="luxury-cta animate-up">VIEW WORK —</a>
           </div>

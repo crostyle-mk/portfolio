@@ -91,7 +91,7 @@ import { Link } from "react-router-dom";
           opacity: 0.6;
           transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
           mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%);
-          -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%);
+          -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%);
         }
 
         @media (min-width: 1025px) {
@@ -142,7 +142,7 @@ import { Link } from "react-router-dom";
           .category-media {
             opacity: 1; 
             mask-image: linear-gradient(to left side, rgba(0,0,0,1) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%);
-            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 100%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 100%, rgba(0,0,0,0) 100%); 
           }
           .categories-container { margin-top: 60px; }
           .category-content { margin-top: auto; padding-bottom: 100px; padding-left: 6%; }

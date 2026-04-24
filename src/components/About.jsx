@@ -72,14 +72,19 @@ const About = () => {
             text-align: center; /* Mirrors Contact's mobile center alignment */
             font-size: 1.03rem;
             margin-bottom: 50px;
+            letter-spacing: 0.3em;
           }
 
           .body-para {
-            font-size: 0.70rem;
-            line-height: 1.3;
-            letter-spacing: 0.1em; 
+            font-size: 0.85rem;
+            line-height: 1.6;
+            letter-spacing: 0.05em; 
             text-align: center;
-            margin-bottom: 80px;
+            margin: 0 auto;
+            margin-bottom: 60px;
+
+            max-width: 85%; 
+            padding: 0 10px;
           }
         }
       `}</style>
@@ -91,10 +96,15 @@ const About = () => {
           
           <p className="body-para">
            I am a Dubai-based photographer and videographer, working across fashion, events, and creative projects since 2022.
+           <br /><br />
             My work focuses on bringing a cinematic quality to every frame, with strong attention to composition, lighting, and overall visual balance.
+            <br /><br />
              Experienced in both studio and outdoor environments, I work comfortably in collaborative settings, contributing as part of a team to deliver strong visual outcomes.
+             <br /><br />
               Each project is an opportunity to create something visually strong and meaningful, both for people and brands.
+              <br /><br />
                My approach is simple — understand the moment, frame it well, and bring it to life through editing. 
+               <br /><br />
               I believe in taking the time to do things right, avoiding rushed work and focusing on creating visuals that are clean, detailed, and thoughtfully crafted.
 
           </p>
