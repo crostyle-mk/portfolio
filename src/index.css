@@ -51,12 +51,11 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  opacity: 0.18; 
+  opacity: 0.12; 
   pointer-events: none;
-  z-index: 50; /* Sits over everything slightly to unify the look */
+  z-index: 1; /* Sits over everything slightly to unify the look */
   background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
-  /* This creates that slight 'shimmer' look in the gold areas */
-  mix-blend-mode: overlay;
+
 }
 
 /* MOBILE FIX: Perfect blend for narrow screens */
@@ -64,21 +63,12 @@ body::after {
   html, body, #root {
     background: 
       /* Push the top light further right to avoid touching the "I AM" text */
-      radial-gradient(circle at 100% 40%, rgba(180, 150, 100, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 100% 40%, rgba(180, 150, 100, 0.10) 0%, transparent 25%),
       
       /* Push the bottom gold hit lower so it stays behind the Footer/Categories */
-      radial-gradient(circle at 100% 90%, rgba(184, 150, 100, 0.05) 10%, transparent 20%),
+      radial-gradient(circle at 100% 90%, rgba(184, 150, 100, 0.10) 10%, transparent 30%),
       
       /* Deepen the center charcoal to ensure "MOHAMMED KAREEM" remains sharp */
       linear-gradient(180deg, #050505 0%, #11100e 50%, #050505 100%) !important;
   }
-}
-/* THE CINEMATIC BLUR (Optional: softens the background transition) */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  backdrop-filter: blur(1px); /* Very subtle softening of the light */
-  pointer-events: none;
-  z-index: -1;
 }

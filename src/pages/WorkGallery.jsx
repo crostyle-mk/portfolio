@@ -169,39 +169,6 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
 
 };
 
-const GridComparisonRow = ({ items, folder, prefix }) => {
-
-  return (
-
-    <div className="grid grid-cols-3 gap-2 md:gap-8 px-[2%] md:px-[5%] mb-12">
-
-      {items.map((item, idx) => (
-
-        <div key={idx} className="flex flex-col gap-2">
-
-          <div className="relative aspect-[2/3] overflow-hidden group">
-
-             <BeforeAfterSlider
-
-                before={`${prefix}${item.before}.jpg`}
-
-                after={`${prefix}${item.after}.jpg`}
-
-                folder={folder}
-
-             />
-
-          </div>
-
-        </div>
-
-      ))}
-
-    </div>
-
-  );
-
-};
 
 const WideSlideshowRow = ({ images, activeIndex, folder, prefix, pos }) => {
   return (
@@ -242,17 +209,46 @@ const WideSlideshowRow = ({ images, activeIndex, folder, prefix, pos }) => {
   );
 };
 
+const GridComparisonRow = ({ items, folder, prefix }) => {
 
+  return (
 
+    <div className="grid grid-cols-3 gap-2 md:gap-8 px-[2%] md:px-[5%] mb-12">
+
+      {items.map((item, idx) => (
+
+        <div key={idx} className="flex flex-col gap-2">
+
+          <div className="relative aspect-[2/3] overflow-hidden group">
+
+             <BeforeAfterSlider
+
+                before={`${prefix}${item.before}.jpg`}
+
+                after={`${prefix}${item.after}.jpg`}
+
+                folder={folder}
+
+             />
+
+          </div>
+
+        </div>
+
+      ))}
+
+    </div>
+
+  );
+
+};
 // Internal Slider Logic for the Grid
 
 const BeforeAfterSlider = ({ before, after, folder }) => {
 
   const [sliderPos, setSliderPos] = useState(50);
 
-
-
-  const handleMove = (e) => {
+ const handleMove = (e) => {
 
     const rect = e.currentTarget.getBoundingClientRect();
 
@@ -261,8 +257,6 @@ const BeforeAfterSlider = ({ before, after, folder }) => {
     setSliderPos(Math.max(0, Math.min(100, x)));
 
   };
-
-
 
   return (
 
@@ -329,8 +323,6 @@ const BeforeAfterSlider = ({ before, after, folder }) => {
   );
 
 };
-
-
 
 
 
