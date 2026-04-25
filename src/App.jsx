@@ -9,15 +9,13 @@ import Category from "./components/Category";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
-
-// --- IMPORT YOUR NEW GALLERY PAGE ---
 import WorkGallery from "./pages/WorkGallery";
 
 function App() {
   return (
     <Router>
       <div id="top"></div>
-      <div className="scroll-smooth antialiased bg-black">
+      <div className="scroll-smooth antialiased ">
         <Navbar />
         
         <Routes>

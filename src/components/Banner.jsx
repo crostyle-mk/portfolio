@@ -16,7 +16,7 @@ const Banner = () => {
 
         .luxury-banner {
           position: relative;
-          background: #050505;
+          background: transparent;
           width: 100%;
           min-height: 100vh;
           display: flex;
@@ -148,8 +148,8 @@ const Banner = () => {
       className="h-full w-full object-contain banner-image ml-auto text-transparent"
       alt="Mohammed Kareem"
       style={{ opacity: 0.9 }} 
-    />
-    <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/20 to-transparent" />
+    /> <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/20 to-transparent" />
+   
   </div>
 
   <div className="orb" style={{ transform: `translate3d(0, ${scrollY * 0.4}px, 0)`, position: 'absolute', inset: 0, zIndex: 1 }} />

@@ -1,3 +1,70 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-attachment: fixed !important;
+  overflow-x: hidden;
+
+  /* THE MASTER CINEMATIC GRADIENT */
+  background: 
+    /* 1. THE TOP LIGHT LEAK (Subtle 30% hit) */
+    radial-gradient(
+      ellipse at 80% 0%, 
+      rgba(130, 105, 75, 0.12) 0%, 
+      transparent 50%
+    ),
+    
+    /* 2. THE BOTTOM 'GLOWING FLOOR' (Heavy 70% hit) */
+    /* Moved to the far corner to create a 'diagonal' cinematic beam */
+    radial-gradient(
+      ellipse at 95% 95%, 
+      rgba(184, 150, 100, 0.22) 0%, 
+      rgba(60, 50, 40, 0.1) 40%, 
+      transparent 75%
+    ),
+
+    /* 3. THE CENTER VIGNETTE (This makes it feel like a movie screen) */
+    radial-gradient(
+      circle at 50% 50%, 
+      transparent 20%, 
+      rgba(0, 0, 0, 0.6) 100%
+    ),
+
+    /* 4. THE DEEP SMOKY BASE */
+    linear-gradient(
+      160deg, 
+      #050505 0%, 
+      #0f0e0c 45%, 
+      #030303 100%
+    ) !important;
+
+  background-color: #030303 !important;
+}
+
+/* THE FILM GRAIN & DUST (Essential for the 007 texture) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.18; 
+  pointer-events: none;
+  z-index: 50; /* Sits over everything slightly to unify the look */
+  background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+  /* This creates that slight 'shimmer' look in the gold areas */
+  mix-blend-mode: overlay;
+}
+
+/* THE CINEMATIC BLUR (Optional: softens the background transition) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(1px); /* Very subtle softening of the light */
+  pointer-events: none;
+  z-index: -1;
+}

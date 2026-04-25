@@ -45,7 +45,7 @@ const Hero = () => {
   .hero-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0); 
+    background: transparent;
     z-index: 1;
   }
       .pause-btn {
@@ -83,7 +83,7 @@ const Hero = () => {
   @media (max-width: 768px) {
     .parallax-wrapper {
       height: auto; /* Disables long scroll on mobile if no text is present */
-      background: #000;
+      background: transparent;
     }
 
     .video-sticky-container {
@@ -98,7 +98,7 @@ const Hero = () => {
       width: 100%;
       height: 100%;
       object-fit: contain; /* Shows the FULL 1920x1080 frame without cropping */
-      background: #000;
+      background: transparent;
     }
     .pause-btn { 
     width: 30px;

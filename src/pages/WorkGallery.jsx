@@ -31,7 +31,7 @@ const Grid3Row = ({ ids, folder, prefix, activeIndex }) => (
 
         return (
 
-          <div key={idx} className="aspect-[2/3] bg-zinc-950 overflow-hidden relative">
+          <div key={idx} className="aspect-[2/3]  overflow-hidden relative">
 
             {cellImages.map((id, imgIdx) => {
 
@@ -119,7 +119,7 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
 
       <div className={`relative overflow-hidden shadow-2xl transition-all duration-1000
 
-        ${isContained ? "w-auto h-[30vh] md:h-[60vh]" : "w-full aspect-video md:aspect-auto md:h-[60vh] bg-zinc-950"}`}>
+        ${isContained ? "w-auto h-[30vh] md:h-[60vh]" : "w-full aspect-video md:aspect-auto md:h-[60vh] "}`}>
 
         {isVideo ? (
 
@@ -179,7 +179,7 @@ const GridComparisonRow = ({ items, folder, prefix }) => {
 
         <div key={idx} className="flex flex-col gap-2">
 
-          <div className="relative aspect-[2/3] bg-zinc-950 overflow-hidden group">
+          <div className="relative aspect-[2/3] overflow-hidden group">
 
              <BeforeAfterSlider
 
@@ -207,7 +207,7 @@ const WideSlideshowRow = ({ images, activeIndex, folder, prefix, pos }) => {
   return (
     <div className="w-full flex justify-center mb-10 md:mb-16 px-[5%]">
       {/* Container dimensions and shadow match your WideRow exactly */}
-      <div className="relative overflow-hidden shadow-2xl w-full aspect-video md:aspect-auto md:h-[60vh] bg-zinc-950">
+      <div className="relative overflow-hidden shadow-2xl w-full aspect-video md:aspect-auto md:h-[60vh] ">
         {images.map((imgId, i) => {
           // Logic to determine which image is currently active
           const isCurrent = i === activeIndex % images.length;
@@ -224,6 +224,7 @@ const WideSlideshowRow = ({ images, activeIndex, folder, prefix, pos }) => {
             >
               <img 
                 src={`/assets/${folder}/${prefix}${imgId}.jpg`}
+                loading="lazy"
                 alt=""
                 className="h-full w-full object-cover"
                 style={{
@@ -337,7 +338,7 @@ const SlideshowRow = ({ images, activeIndex, folder, prefix }) => (
 
   <div className="w-full px-[5%] mb-20">
 
-    <div className="relative w-full h-[40vh] md:h-[80vh] overflow-hidden bg-black shadow-2xl">
+    <div className="relative w-full h-[40vh] md:h-[80vh] overflow-hidden shadow-2xl">
 
       {images.map((img, i) => {
 
@@ -625,7 +626,7 @@ const WorkGallery = () => {
   
   [categoryName]);
 
-  if (!currentWork) return <div className="bg-black h-screen" />;
+  if (!currentWork) return <div className="h-screen" />;
 
   return (
 
@@ -633,7 +634,7 @@ const WorkGallery = () => {
 
     key={categoryName} // <--- PLACE IT HERE
 
-    className="min-h-screen bg-black text-white pt-32 overflow-x-hidden selection:bg-white selection:text-black">
+    className="min-h-screen  text-white pt-32 overflow-x-hidden selection:bg-white selection:text-black">
 
       <style dangerouslySetInnerHTML={{ __html: `
 
@@ -665,10 +666,10 @@ const WorkGallery = () => {
 
           onClick={() => navigate("/")}
 
-          className="nav-link text-[10px] md:text-[11px] tracking-[0.6em] text-zinc-400 hover:text-white mb-6 md:mb-12 uppercase transition-colors"
+          className="nav-link text-[10px] md:text-[11px] tracking-[0.6em] text-zinc-300 hover:text-white mb-6 md:mb-12 uppercase transition-colors"
 
         >
-          ← Back to Home
+          ← Back
         </button>
 
         <h1

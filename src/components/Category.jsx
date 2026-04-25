@@ -60,7 +60,7 @@ import { Link } from "react-router-dom";
         @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Outfit:wght@100;300;400&display=swap');
 
         .categories-container {
-          background: #000000;
+          background: transparent;
           padding: 0 0 80px 0;
           margin: 0;
           margin-top: 120px;
@@ -73,7 +73,7 @@ import { Link } from "react-router-dom";
           height: 50vh; 
           text-decoration: none;
           overflow: hidden;
-          background: #000000;
+          background:transparent;
           margin-bottom: 12vh;
           transition: height 0.8s cubic-bezier(0.19, 1, 0.22, 1);
         }
@@ -147,7 +147,7 @@ import { Link } from "react-router-dom";
           .categories-container { margin-top: 60px; }
           .category-content { margin-top: auto; padding-bottom: 100px; padding-left: 6%; }
           .category-title { font-size: 1.2rem; }
-          .category-meta { font-size: 0.60rem; letter-spacing: 0.5em; } 
+          .category-meta { font-size: 0.40rem; letter-spacing: 0.5em; } 
         }
       `}</style>
 
