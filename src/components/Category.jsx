@@ -89,19 +89,27 @@ import { Link } from "react-router-dom";
           object-fit: cover;
           z-index: 1;
           opacity: 0.6;
+          will-change: opacity, transform;
           transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
           mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%);
           -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%);
+          contain: paint;
         }
 
         @media (min-width: 1025px) {
           .category-item:hover .category-media {
             opacity: 0.9;
-            transform: scale(1.03);
+            transform: scale(1.02);
           }
           .category-item:hover .category-title {
             color: #ffffff;
             transform: translateX(10px);
+          }
+        }
+        
+        @media (max-width: 1024px) {
+          .category-item:hover .category-media {
+            transform: none;
           }
         }
 
@@ -153,7 +161,7 @@ import { Link } from "react-router-dom";
 
       <div className="categories-container" id="category">
         {categories
-          .filter(cat => cat.active !== false)
+          .filter(cat => cat.active)
           .map((cat) => (
             <Link key={cat.id} to={cat.path} className="category-item">
               
@@ -165,14 +173,18 @@ import { Link } from "react-router-dom";
                   preload="metadata"
                   autoPlay loop muted playsInline
                   className="category-media"
+                  loading="lazy"
                   style={{ objectPosition: cat.pos }}
+                  onError={(e) => e.target.style.display = 'none'}
                 />
               ) : (
                 <img 
                   src={cat.img} 
-                  alt={cat.title} 
+                  alt={cat.title}
+                  loading="lazy"
                   className="category-media"
                   style={{ objectPosition: cat.pos }}
+                  onError={(e) => e.target.style.display = 'none'}
                 />
               )}
               

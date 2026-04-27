@@ -4,9 +4,16 @@ const Banner = () => {
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    let rafId = null;
+    const handleScroll = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => setScrollY(window.scrollY));
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   return (
@@ -116,37 +123,27 @@ const Banner = () => {
 
         /* --- MOBILE ONLY (MAX 768px) --- */
         @media (max-width: 768px) {
-          .luxury-banner { min-height: 100dvh; 
-          contain: paint;     /* Boosts mobile rendering performance */
-  }
-          .premium-badge {
-          margin-bottom: 15px;
-          }
-          .main-name {
-            font-size: clamp(1.4rem, 8vw, 1.5rem); 
-            letter-spacing: -0.02em;
-          }
-
-          .role-title {
-            font-size: clamp(0.7rem, 4vw, 0.8rem);
-            letter-spacing: 0.15em;
-          }
-          
+          .luxury-banner { min-height: 100dvh; contain: paint; transform: none !important; }
+          .premium-badge { margin-bottom: 15px; }
+          .main-name { font-size: clamp(1.4rem, 8vw, 1.5rem); letter-spacing: -0.02em; }
+          .role-title { font-size: clamp(0.7rem, 4vw, 0.8rem); letter-spacing: 0.15em; }
           .content-wrapper { padding: 0 15px; }
-
           .description-box { font-size: 0.8rem; max-width: 80%; }
+          .orb { display: none; }
         }
       `}</style>
 
-<section id="banner" className="luxury-banner" style={{ transform: window.innerWidth > 768 ? `translate3d(0, ${scrollY * 0.3}px, 0)` : 'none' }}> 
+<section id="banner" className="luxury-banner" style={{ transform: `translate3d(0, ${scrollY * 0.3}px, 0)` }}> 
    {/* 1. Background Image Layer */}
   <div className="absolute inset-0 z-0">
     <img 
       src="/assets/me/portrait-shot.png" 
-      loading="eager"           // Tells browser to load this FIRST
-  fetchpriority="high"
+      srcSet="/assets/me/portrait-shot.png 1920w, /assets/me/portrait-shot-sm.png 768w"
+      sizes="(max-width: 768px) 100vw, 100vw"
+      loading="eager"
+      fetchPriority="high"
       className="h-full w-full object-contain banner-image ml-auto text-transparent"
-      alt="Mohammed Kareem"
+      alt="Mohammed Kareem - Photographer & Videographer"
       style={{ opacity: 0.9 }} 
     /> <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/20 to-transparent" />
    

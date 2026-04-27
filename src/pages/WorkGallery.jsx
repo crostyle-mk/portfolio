@@ -47,9 +47,11 @@ const Grid3Row = ({ ids, folder, prefix, activeIndex }) => (
 
                   loading="lazy"
 
-                  alt=""
+                  alt={folder}
 
                   className="absolute inset-0 w-full h-full object-cover"
+
+                  onError={(e) => e.target.style.display = 'none'}
 
                   style={{
 
@@ -129,6 +131,8 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
 
           className="h-full w-full object-cover cinematic-media"
 
+          onError={(e) => e.target.style.display = 'none'}
+
          style={{
 
               objectPosition: `center ${pos || "50%"}`,
@@ -147,6 +151,8 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
 
           className="h-full w-full object-cover cinematic-media"
 
+          onError={(e) => e.target.style.display = 'none'}
+
          style={{
 
               objectPosition: `center ${pos || "50%"}`,
@@ -155,7 +161,7 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
 
             }}
 
-          alt=""
+          alt={folder}
 
           />
 
@@ -192,8 +198,9 @@ const WideSlideshowRow = ({ images, activeIndex, folder, prefix, pos }) => {
               <img 
                 src={`/assets/${folder}/${prefix}${imgId}.jpg`}
                 loading="lazy"
-                alt=""
+                alt={folder}
                 className="h-full w-full object-cover"
+                onError={(e) => e.target.style.display = 'none'}
                 style={{
                   objectPosition: `center ${pos || "50%"}`,
                   /* Applying your WideRow's cinematicPulse for that breathing effect */
@@ -268,6 +275,26 @@ const BeforeAfterSlider = ({ before, after, folder }) => {
 
       onTouchMove={handleMove}
 
+      onKeyDown={(e) => {
+
+        if (e.key === 'ArrowLeft') setSliderPos(Math.max(0, sliderPos - 5));
+
+        if (e.key === 'ArrowRight') setSliderPos(Math.min(100, sliderPos + 5));
+
+      }}
+
+      tabIndex={0}
+
+      role="slider"
+
+      aria-valuemin={0}
+
+      aria-valuemax={100}
+
+      aria-valuenow={Math.round(sliderPos)}
+
+      aria-label="Before and after comparison slider"
+
     >
 
       {/* After Image */}
@@ -278,9 +305,11 @@ const BeforeAfterSlider = ({ before, after, folder }) => {
         
         loading="lazy"
 
-        alt=""
+        alt="after comparison"
 
         className="absolute inset-0 w-full h-full object-cover"
+
+        onError={(e) => e.target.style.display = 'none'}
 
       />
 
@@ -300,9 +329,11 @@ const BeforeAfterSlider = ({ before, after, folder }) => {
 
           loading="lazy"
 
-          alt=""
+          alt="before comparison"
 
           className="w-full h-full object-cover"
+
+          onError={(e) => e.target.style.display = 'none'}
 
         />
 
@@ -364,9 +395,11 @@ const SlideshowRow = ({ images, activeIndex, folder, prefix }) => (
 
               loading="lazy"
 
-              alt=""
+              alt={folder}
 
               className="w-full h-full object-cover"
+
+              onError={(e) => e.target.style.display = 'none'}
 
               style={{
 
