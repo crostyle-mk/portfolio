@@ -188,7 +188,7 @@ const WideSlideshowRow = ({ images, activeIndex, folder, prefix, pos }) => {
           return (
             <div 
               key={imgId} 
-              className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+              className="absolute inset-0 transition-opacity duration-1200 ease-in-out"
               style={{ 
                 zIndex: isCurrent ? 20 : 10, 
                 opacity: isCurrent ? 1 : 0,
@@ -450,6 +450,8 @@ const WorkGallery = () => {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const [isLoading, setIsLoading] = useState(true);
+
  const workData = {
 
 
@@ -639,7 +641,12 @@ const WorkGallery = () => {
   const currentWork = workData[categoryName];
 
 
-  useEffect(() => { window.scrollTo(0, 0); }, [categoryName]);
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [categoryName]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 500); // Minimum loading time
+    return () => clearTimeout(timer);
+  }, [categoryName]);
 
   useEffect(() => {
 
@@ -651,7 +658,7 @@ const WorkGallery = () => {
   
   [categoryName]);
 
-  if (!currentWork) return <div className="h-screen" />;
+  if (!currentWork) return <div className="h-screen bg-black" />;
 
   return (
 
@@ -659,9 +666,32 @@ const WorkGallery = () => {
 
     key={categoryName} // <--- PLACE IT HERE
 
-    className="min-h-screen  text-white pt-32 overflow-x-hidden selection:bg-white selection:text-black">
+    className="min-h-screen  text-white pt-32 overflow-x-hidden selection:bg-white selection:text-black relative">
+
+      {isLoading && (
+        <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
+          <div className="text-white text-xl">Loading...</div>
+        </div>
+      )}
 
       <style dangerouslySetInnerHTML={{ __html: `
+
+        @keyframes cinematicSlow {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.03); }
+          100% { transform: scale(1); }
+        }
+
+        @keyframes cinematicPulse {
+          0% { transform: scale(1.01); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1.01); }
+        }
+
+        .cinematic-media {
+          animation: cinematicPulse 12s ease-in-out infinite;
+          will-change: transform;
+        }
 
         .nav-link { position: relative; display: inline-block; }
 
@@ -682,6 +712,15 @@ const WorkGallery = () => {
         }
 
         .nav-link:hover::after { width: 100%; }
+
+        @media (max-width: 768px) {
+          .cinematic-media { animation: none; }
+          * { will-change: auto; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          * { animation: none !important; transition: none !important; }
+        }
 
       `}} />
 
