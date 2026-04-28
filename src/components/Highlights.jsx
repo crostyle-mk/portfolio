@@ -22,23 +22,26 @@ const Highlights = () => {
     { id: "h6", src: "h6.jpg", format: "portrait" },
   ];
 
-  // DESKTOP-ONLY smooth scroll (CSS handles it)
+  // Arrow scroll (programmatic only)
   const scroll = (direction) => {
-    if (scrollRef.current) {
-      const scrollAmount = isMobile ? 292 : 512;
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount
-      });
-    }
+    if (!scrollRef.current) return;
+    const scrollAmount = isMobile ? 292 : 512;
+    scrollRef.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
   };
 
+  // Active index update (throttled with RAF)
   const handleScroll = useCallback(() => {
     if (rafId.current) return;
+
     rafId.current = requestAnimationFrame(() => {
       if (!scrollRef.current) {
         rafId.current = null;
         return;
       }
+
       const container = scrollRef.current;
       const center = container.scrollLeft + container.offsetWidth / 2;
 
@@ -58,17 +61,18 @@ const Highlights = () => {
         }
       });
 
-      if (closestIndex !== activeIndex) setActiveIndex(closestIndex);
+      setActiveIndex(closestIndex);
       rafId.current = null;
     });
-  }, [activeIndex]);
+  }, []);
 
+  // Attach scroll listener (for arrow scroll + mobile scroll)
   useEffect(() => {
     const container = scrollRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll, { passive: true });
-      return () => container.removeEventListener("scroll", handleScroll);
-    }
+    if (!container) return;
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
   const sidePadding = isMobile
@@ -97,6 +101,7 @@ const Highlights = () => {
                 <path d="m15 18-6-6 6-6" />
               </svg>
             </button>
+
             <button
               onClick={() => scroll("right")}
               className="absolute right-6 top-1/2 -translate-y-1/2 z-[100] p-5 rounded-full border border-white/10 text-white hover:bg-white hover:text-black transition-all bg-black/40 backdrop-blur-md"
@@ -110,8 +115,8 @@ const Highlights = () => {
 
         <div
           ref={scrollRef}
-          className={`flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory items-end outline-none pb-20 ${
-            !isMobile ? "scroll-smooth" : ""
+          className={`flex gap-2 no-scrollbar snap-x snap-mandatory items-end outline-none pb-20 ${
+            isMobile ? "overflow-x-auto" : "overflow-x-hidden select-none"
           }`}
           style={{
             height: isMobile ? "400px" : "650px",
