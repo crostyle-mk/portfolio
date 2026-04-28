@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Banner from "./components/Banner";
 import Hero from "./components/Hero";
 import Category from "./components/Category";
+import Highlights from "./components/Highlights";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
@@ -30,7 +31,8 @@ function App() {
                 <Banner /> 
                 <Hero /> 
                 <Category />
-                 <About />
+                <Highlights />
+                <About />
                 <Contact />
               </main>
             } 

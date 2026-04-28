@@ -58,6 +58,18 @@ body::after {
 
 }
 
+/* --- HIDE NATIVE SCROLLBAR --- */
+/* For Chrome, Safari, and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge, and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 /* MOBILE FIX: Perfect blend for narrow screens */
 @media (max-width: 768px) {
   html, body, #root {
