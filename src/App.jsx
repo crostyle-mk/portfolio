@@ -12,42 +12,46 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import WorkGallery from "./pages/WorkGallery";
 
+import { Analytics } from "@vercel/analytics/react";
+
 function App() {
   return (
-    <Router>
-      <div id="top"></div>
-      <div className="scroll-smooth antialiased ">
-        {/* Preload critical assets */}
-        <link rel="preload" href="/assets/me/portrait-shot.png" as="image" />
-        <link rel="preload" href="/assets/fashion.mp4" as="video" />
-        <Navbar />
-        
-        <Routes>
-          {/* --- HOME PAGE ROUTE --- */}
-          <Route 
-            path="/" 
-            element={
-              <main>
-                <Banner /> 
-                <Hero /> 
-                <Category />
-                <Highlights />
-                <About />
-                <Contact />
-              </main>
-            } 
-          />
-
-          {/* --- DYNAMIC WORK PAGES --- */}
-          <Route path="/:categoryName" element={<WorkGallery />} />
+    <>
+      <Router>
+        <div id="top"></div>
+        <div className="scroll-smooth antialiased ">
+          {/* Preload critical assets */}
+          <link rel="preload" href="/assets/me/portrait-shot.png" as="image" />
+          <link rel="preload" href="/assets/fashion.mp4" as="video" />
+          <Navbar />
           
-        </Routes>
+          <Routes>
+            {/* --- HOME PAGE ROUTE --- */}
+            <Route 
+              path="/" 
+              element={
+                <main>
+                  <Banner /> 
+                  <Hero /> 
+                  <Category />
+                  <Highlights />
+                  <About />
+                  <Contact />
+                </main>
+              } 
+            />
 
-        <Footer />
-      </div>
-    </Router>
+            {/* --- DYNAMIC WORK PAGES --- */}
+            <Route path="/:categoryName" element={<WorkGallery />} />
+          </Routes>
+
+          <Footer />
+        </div>
+      </Router>
+
+      <Analytics />
+    </>
   );
 }
 
-// --- THIS LINE IS CRITICAL: IT FIXES THE EXPORT ERROR ---
 export default App;
