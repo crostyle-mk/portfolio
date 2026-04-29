@@ -13,6 +13,8 @@ import Footer from "./components/Footer";
 import WorkGallery from "./pages/WorkGallery";
 
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
+
 
 function App() {
   return (
@@ -50,6 +52,7 @@ function App() {
       </Router>
 
       <Analytics />
+      <SpeedInsights />
     </>
   );
 }
