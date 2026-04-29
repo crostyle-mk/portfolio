@@ -157,6 +157,29 @@ import { Link } from "react-router-dom";
           .category-title { font-size: 1.2rem; }
           .category-meta { font-size: 0.40rem; letter-spacing: 0.5em; } 
         }
+          @media (max-width: 768px) {
+  .category-content {
+    margin-top: auto;
+    padding-bottom: 100px;
+    padding-left: 0;        /* remove left padding */
+    text-align: center;     /* center all text */
+    width: 100%;
+  }
+
+  .category-title {
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    text-align: center;     /* ensure title is centered */
+  }
+
+  .category-meta {
+    font-size: 0.40rem;
+    letter-spacing: 0.5em;
+     margin-bottom: 5px;
+    text-align: center;     /* center meta text */
+  }
+}
+
       `}</style>
 
       <div className="categories-container" id="category">

@@ -2,85 +2,99 @@
 @tailwind components;
 @tailwind utilities;
 
+/* GLOBAL RESET */
 html, body, #root {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100vh;
-  background-attachment: fixed !important;
   overflow-x: hidden;
 
-  /* THE MASTER CINEMATIC GRADIENT */
-  background: 
-    /* 1. THE TOP LIGHT LEAK (Subtle 30% hit) */
+  /* MOBILE-SAFE: prevent flashing */
+  background-color: #0a0908 !important;
+
+  /* Default: mobile-safe scroll */
+  background-attachment: scroll !important;
+
+  /* CINEMATIC SOFT BEIGE–BROWN GRADIENT */
+  background-image:
+    /* 1. Soft top light (reference-style, reduced transparency to prevent flash) */
     radial-gradient(
-      ellipse at 80% 0%, 
-      rgba(130, 105, 75, 0.12) 0%, 
-      transparent 50%
-    ),
-    
-    /* 2. THE BOTTOM 'GLOWING FLOOR' (Heavy 70% hit) */
-    /* Moved to the far corner to create a 'diagonal' cinematic beam */
-    radial-gradient(
-      ellipse at 95% 95%, 
-      rgba(184, 150, 100, 0.22) 0%, 
-      rgba(60, 50, 40, 0.1) 40%, 
-      transparent 75%
+      circle at 70% 0%,
+      rgba(210, 185, 150, 0.15) 0%,
+      rgba(150, 120, 90, 0.08) 35%,
+      transparent 70%
     ),
 
-    /* 3. THE CENTER VIGNETTE (This makes it feel like a movie screen) */
+    /* 2. Misty diagonal fog (cinematic depth) */
     radial-gradient(
-      circle at 50% 50%, 
-      transparent 20%, 
-      rgba(0, 0, 0, 0.6) 100%
+      ellipse at 80% 80%,
+      rgba(120, 95, 70, 0.15) 0%,
+      rgba(60, 45, 35, 0.08) 40%,
+      transparent 80%
     ),
 
-    /* 4. THE DEEP SMOKY BASE */
+    /* 3. Soft center glow (no harsh vignette) */
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(0, 0, 0, 0.12) 0%,
+      rgba(0, 0, 0, 0.45) 100%
+    ),
+
+    /* 4. Deep cinematic base */
     linear-gradient(
-      160deg, 
-      #050505 0%, 
-      #0f0e0c 45%, 
-      #030303 100%
+      160deg,
+      #0a0908 0%,
+      #1a1816 40%,
+      #0a0908 100%
     ) !important;
-
-  background-color: #030303 !important;
 }
 
-/* THE FILM GRAIN & DUST (Essential for the 007 texture) */
+/* DESKTOP: enable fixed cinematic background */
+@media (min-width: 1024px) {
+  html, body, #root {
+    background-attachment: fixed !important;
+  }
+}
+
+/* FILM GRAIN — MOBILE SAFE */
 body::after {
   content: "";
-  position: fixed;
+  position: absolute; /* prevents double scroll + flashing */
   inset: 0;
-  opacity: 0.12; 
+  opacity: 0.06; /* slightly reduced to avoid flash */
   pointer-events: none;
-  z-index: 1; /* Sits over everything slightly to unify the look */
+  z-index: 1;
   background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
-
 }
 
-/* --- HIDE NATIVE SCROLLBAR --- */
-/* For Chrome, Safari, and Opera */
+/* DESKTOP: restore fixed grain */
+@media (min-width: 1024px) {
+  body::after {
+    position: fixed;
+  }
+}
+
+/* HIDE NATIVE SCROLLBAR */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
-/* For IE, Edge, and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* MOBILE FIX: Perfect blend for narrow screens */
+/* MOBILE GRADIENT TUNING — softer, no flash */
 @media (max-width: 768px) {
   html, body, #root {
-    background: 
-      /* Push the top light further right to avoid touching the "I AM" text */
-      radial-gradient(circle at 100% 40%, rgba(180, 150, 100, 0.10) 0%, transparent 25%),
-      
-      /* Push the bottom gold hit lower so it stays behind the Footer/Categories */
-      radial-gradient(circle at 100% 90%, rgba(184, 150, 100, 0.10) 10%, transparent 30%),
-      
-      /* Deepen the center charcoal to ensure "MOHAMMED KAREEM" remains sharp */
-      linear-gradient(180deg, #050505 0%, #11100e 50%, #050505 100%) !important;
+    background-image:
+      radial-gradient(circle at 100% 40%, rgba(210, 185, 150, 0.12) 0%, transparent 30%),
+      radial-gradient(circle at 100% 90%, rgba(180, 150, 100, 0.10) 10%, transparent 35%),
+      linear-gradient(180deg, #0a0908 0%, #1a1816 50%, #0a0908 100%) !important;
   }
+}
+
+/* FIX HIGHLIGHTS DOUBLE SCROLL */
+.highlights-container {
+  overflow-y: hidden !important;
 }
