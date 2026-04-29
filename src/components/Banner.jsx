@@ -26,7 +26,6 @@ const Banner = () => {
         @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Outfit:wght@200;400;600&display=swap');
 
         .luxury-banner {
-         background: #050505;
           position: relative;
           width: 100%;
           min-height: 100vh;
