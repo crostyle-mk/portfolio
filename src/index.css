@@ -13,3 +13,18 @@ html, body, #root {
   /* SOLID CINEMATIC BACKGROUND */
   background: #0f0e0c !important;
 }
+
+/* HIDE NATIVE SCROLLBAR (optional) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* FIX HIGHLIGHTS DOUBLE SCROLL */
+.highlights-container {
+  overflow-y: hidden !important;
+}
+
