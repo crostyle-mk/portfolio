@@ -1,55 +1,95 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback, memo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
-/* ---------------- GRID 3 ROW ---------------- */
-const Grid3Row = ({ ids, folder, prefix, activeIndex }) => (
-  <>
-    <style dangerouslySetInnerHTML={{ __html: `
-      @keyframes cinematicSlow {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.03); }
-        100% { transform: scale(1); }
-      }
-    `}} />
+/* Memoized Grid3Row to prevent unnecessary re-renders */
+const Grid3Row = memo(({ ids, mobileIds, folder, prefix, activeIndex }) => {
+ const flatIds = useMemo(() => mobileIds || ids.map(item => (Array.isArray(item) ? item[0] : item)), [mobileIds, ids]);
+  const displayIds = useMemo(() => [...flatIds, ...flatIds], [flatIds]);
 
-    <div className="grid grid-cols-3 gap-2 md:gap-8 px-[5%] mb-12">
-      {ids.map((cellData, idx) => {
-        const cellImages = Array.isArray(cellData) ? cellData : [cellData];
-        const localIndex = Math.floor((activeIndex + idx) % cellImages.length);
+  return (
+    <div className="relative z-10 w-full">
 
-        return (
-          <div key={idx} className="aspect-[2/3] overflow-hidden relative">
-            {cellImages.map((id, imgIdx) => {
-              const isActive = imgIdx === localIndex;
-              return (
+      {/* MOBILE VERSION (rewritten scrolling) */}
+      <div className="md:hidden w-full overflow-hidden py-4">
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-20%); }
+          }
+          .animate-scroll {
+            display: flex;
+            width: max-content;
+            animation: scrollLeft 30s linear infinite;
+          }
+        `}} />
+
+        <h3 className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-4 px-[4%]">
+          HIGHLIGHTS
+        </h3>
+
+        <div className="animate-scroll">
+          {displayIds.map((id, idx) => (
+            <div
+              key={`scroll-${id}-${idx}`}
+              className="w-[30vw] aspect-[2/3] px-1 flex-shrink-0"
+            >
+              <div className="w-full h-full overflow-hidden rounded-sm shadow-lg relative">
                 <img
-                  key={id}
                   src={`/assets/${folder}/${prefix}${id}.jpg`}
+                  alt={`${folder} highlight ${id}`}
                   loading="lazy"
-                  alt=""
+                  decoding="async"
                   className="absolute inset-0 w-full h-full object-cover"
-                  onError={(e) => (e.target.style.display = "none")}
-                  style={{
-                    transition: "opacity 1000ms cubic-bezier(0.2, 0, 0.1, 1)",
-                    transitionDelay: isActive ? `${idx * 150}ms` : "0ms",
-                    opacity: isActive ? 1 : 0,
-                    zIndex: isActive ? 2 : 1,
-                    animation: "cinematicSlow 10s ease-in-out infinite",
-                    animationDelay: `${idx * 1}s`,
-                    willChange: "opacity, transform",
-                  }}
+                  onError={(e) => { e.target.style.display = "none"; }}
                 />
-              );
-            })}
-          </div>
-        );
-      })}
-    </div>
-  </>
-);
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-/* ---------------- WIDE ROW ---------------- */
-const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
+      {/* DESKTOP VERSION (optimized animations) */}
+      <div className="hidden md:grid grid-cols-3 gap-2 md:gap-8 px-[5%] mb-12">
+        {ids.map((cellData, idx) => {
+          const cellImages = Array.isArray(cellData) ? cellData : [cellData];
+          const localIndex = Math.floor((activeIndex + idx) % cellImages.length);
+
+          return (
+            <div key={`grid-${idx}`} className="aspect-[2/3] overflow-hidden relative" style={{ contain: 'layout style paint' }}>
+              {cellImages.map((id, imgIdx) => {
+                const isActive = imgIdx === localIndex;
+                return (
+                  <img
+                    key={`img-${id}`}
+                    src={`/assets/${folder}/${prefix}${id}.jpg`}
+                    loading="lazy"
+                    decoding="async"
+                    alt={`${folder} gallery item ${id}`}
+                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 will-change-[opacity]"
+                    style={{
+                      opacity: isActive ? 1 : 0,
+                      zIndex: isActive ? 2 : 1,
+                      transitionDelay: isActive ? `${idx * 150}ms` : "0ms",
+                      animation: isActive ? 'cinematicSlow 3.8s ease-in-out infinite' : 'none',
+                      willChange: isActive ? 'transform' : 'auto',
+                    }}
+                    onError={(e) => { e.target.style.display = "none"; }}
+                  />
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+
+    </div>
+  );
+});
+Grid3Row.displayName = 'Grid3Row';
+
+
+/* Memoized WideRow */
+const WideRow = memo(({ id, isVideo, pos, fit, folder, prefix }) => {
   const isContained = fit === "contain";
 
   return (
@@ -67,11 +107,12 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
       `}} />
 
       <div
-        className={`relative overflow-hidden shadow-2xl transition-all duration-1000 ${
+        className={`relative overflow-hidden shadow-lg transition-all duration-1000 ${
           isContained
             ? "w-auto h-[30vh] md:h-[60vh]"
             : "w-full aspect-video md:aspect-auto md:h-[60vh]"
         }`}
+        style={{ contain: 'layout style paint' }}
       >
         {isVideo ? (
           <video
@@ -81,69 +122,138 @@ const WideRow = ({ id, isVideo, pos, fit, folder, prefix }) => {
             muted
             playsInline
             className="h-full w-full object-cover cinematic-media"
-            onError={(e) => (e.target.style.display = "none")}
+            onError={(e) => { e.target.style.display = "none"; }}
             style={{
               objectPosition: `center ${pos || "50%"}`,
-              transform: "scale(1)",
+              willChange: 'transform',
             }}
           />
         ) : (
           <img
             src={`/assets/${folder}/${prefix}${id}.jpg`}
             loading="lazy"
-            alt=""
+            decoding="async"
+            alt={`${folder} wide media ${id}`}
             className="h-full w-full object-cover cinematic-media"
-            onError={(e) => (e.target.style.display = "none")}
+            onError={(e) => { e.target.style.display = "none"; }}
             style={{
               objectPosition: `center ${pos || "50%"}`,
-              transform: "scale(1)",
+              willChange: 'transform',
             }}
           />
         )}
       </div>
     </div>
   );
-};
+});
+WideRow.displayName = 'WideRow';
 
-/* ---------------- WIDE SLIDESHOW ---------------- */
-const WideSlideshowRow = ({ images, activeIndex, folder, prefix, pos }) => (
-  <div className="w-full flex justify-center mb-10 md:mb-16 px-[5%]">
-    <div className="relative overflow-hidden shadow-2xl w-full aspect-video md:aspect-auto md:h-[60vh]">
-      {images.map((imgId, i) => {
-        const isCurrent = i === activeIndex % images.length;
+/* Memoized WideSlideshowRow */
+const WideSlideshowRow = memo(({ images, activeIndex, folder, prefix, pos }) => (
+  <div className="w-full">
 
-        return (
-          <div
-            key={imgId}
-            className="absolute inset-0"
-            style={{
-              zIndex: isCurrent ? 20 : 10,
-              opacity: isCurrent ? 1 : 0,
-            }}
-          >
-            <img
-              src={`/assets/${folder}/${prefix}${imgId}.jpg`}
-              loading="lazy"
-              alt=""
-              className="h-full w-full object-cover"
-              onError={(e) => (e.target.style.display = "none")}
-              style={{
-                objectPosition: `center ${pos || "50%"}`,
-              }}
-            />
-          </div>
-        );
-      })}
+    {/* MOBILE VERSION (optimized Netflix style) */}
+    <div className="relative w-full h-[20vh] mb-[-10vh] md:hidden" style={{ contain: 'layout' }}>
+      <div className="absolute inset-0 z-0">
+        {images.map((item, i) => {
+          const id = typeof item === 'object' ? item.id : item;
+          const isVideo = typeof item === 'object' ? item.isVideo : false;
+          const isCurrent = i === activeIndex % images.length;
+          return (
+            <div
+              key={`mobile-slide-${id}`}
+              className="absolute inset-0 transition-opacity duration-1000 will-change-[opacity]"
+              style={{ opacity: isCurrent ? 1 : 0, willChange: isCurrent ? 'opacity' : 'auto' }}
+            >
+             {isVideo ? (
+                <video
+                  src={`/assets/${folder}/${prefix}${id}.mp4`}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: `center ${pos || "20%"}` }}
+                  onError={(e) => { e.target.style.display = "none"; }}
+                />
+              ) : (
+               <>
+              <img
+                src={`/assets/${folder}/${prefix}${id}.jpg`}
+                loading="lazy"
+                decoding="async"
+                alt={`${folder} slideshow ${id}`}
+                className="h-full w-full object-cover"
+                style={{ objectPosition: `center ${pos || "20%"}` }}
+                onError={(e) => { e.target.style.display = "none"; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none" />
+              </>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
+
+    {/* DESKTOP VERSION (optimized) */}
+    <div className="hidden md:flex justify-center mb-16 px-[5%]">
+      <div className="relative overflow-hidden shadow-lg w-full aspect-video md:aspect-auto md:h-[60vh]" style={{ contain: 'layout style paint' }}>
+        {images.map((item, i) => {
+          const id = typeof item === 'object' ? item.id : item;
+          const isVideo = typeof item === 'object' ? item.isVideo : false;
+          const isCurrent = i === activeIndex % images.length;
+
+          return (
+            <div
+              key={`desktop-slide-${id}`}
+              className="absolute inset-0 transition-opacity duration-1000 will-change-[opacity]"
+              style={{
+                opacity: isCurrent ? 1 : 0,
+                willChange: isCurrent ? 'opacity' : 'auto',
+              }}
+            >
+              {isVideo ? (
+                <video
+                  src={`/assets/${folder}/${prefix}${id}.mp4`}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: `center ${pos || "20%"}` }}
+                  onError={(e) => { e.target.style.display = "none"; }}
+                />
+              ) : (
+                <>
+             <img
+                src={`/assets/${folder}/${prefix}${id}.jpg`}
+                loading="lazy"
+                decoding="async"
+                alt={`${folder} slideshow ${id}`}
+                className="h-full w-full object-cover"
+                style={{ objectPosition: `center ${pos || "20%"}` }}
+                onError={(e) => { e.target.style.display = "none"; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none" />
+              </>
+            )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
   </div>
-);
+));
+WideSlideshowRow.displayName = 'WideSlideshowRow';
 
 
-/* ---------------- BEFORE/AFTER GRID ---------------- */
-const GridComparisonRow = ({ items, folder, prefix }) => (
+/* Memoized GridComparisonRow */
+const GridComparisonRow = memo(({ items, folder, prefix }) => (
   <div className="grid grid-cols-3 gap-2 md:gap-8 px-[2%] md:px-[5%] mb-12">
     {items.map((item, idx) => (
-      <div key={idx} className="flex flex-col gap-2">
+      <div key={`comparison-${idx}`} className="flex flex-col gap-2">
         <div className="relative aspect-[2/3] overflow-hidden group">
           <BeforeAfterSlider
             before={`${prefix}${item.before}.jpg`}
@@ -154,101 +264,111 @@ const GridComparisonRow = ({ items, folder, prefix }) => (
       </div>
     ))}
   </div>
-);
+));
+GridComparisonRow.displayName = 'GridComparisonRow';
 
-const BeforeAfterSlider = ({ before, after, folder }) => {
+const BeforeAfterSlider = memo(({ before, after, folder }) => {
   const [sliderPos, setSliderPos] = useState(50);
 
-  const handleMove = (e) => {
+  const handleMove = useCallback((e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x =
       ((e.clientX || (e.touches && e.touches[0].clientX)) - rect.left) /
       rect.width *
       100;
     setSliderPos(Math.max(0, Math.min(100, x)));
-  };
+  }, []);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === "ArrowLeft") setSliderPos((prev) => Math.max(0, prev - 5));
+    if (e.key === "ArrowRight") setSliderPos((prev) => Math.min(100, prev + 5));
+  }, []);
 
   return (
     <div
       className="relative w-full h-full cursor-col-resize select-none"
       onMouseMove={handleMove}
       onTouchMove={handleMove}
-      onKeyDown={(e) => {
-        if (e.key === "ArrowLeft") setSliderPos(Math.max(0, sliderPos - 5));
-        if (e.key === "ArrowRight") setSliderPos(Math.min(100, sliderPos + 5));
-      }}
+      onKeyDown={handleKeyDown}
       tabIndex={0}
       role="slider"
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={Math.round(sliderPos)}
       aria-label="Before and after comparison slider"
+      style={{ contain: 'layout style' }}
     >
       <img
         src={`/assets/${folder}/${after}`}
         loading="lazy"
-        alt="after comparison"
+        decoding="async"
+        alt="After comparison"
         className="absolute inset-0 w-full h-full object-cover"
-        onError={(e) => (e.target.style.display = "none")}
+        onError={(e) => { e.target.style.display = "none"; }}
       />
 
       <div
-        className="absolute inset-0 w-full h-full z-10"
-        style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
+        className="absolute inset-0 w-full h-full z-10 will-change-[clip-path]"
+        style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)`, willChange: 'clip-path' }}
       >
         <img
           src={`/assets/${folder}/${before}`}
           loading="lazy"
-          alt="before comparison"
+          decoding="async"
+          alt="Before comparison"
           className="w-full h-full object-cover"
-          onError={(e) => (e.target.style.display = "none")}
+          onError={(e) => { e.target.style.display = "none"; }}
         />
       </div>
 
       <div
-        className="absolute top-0 bottom-0 w-[1px] bg-white/40 z-20"
-        style={{ left: `${sliderPos}%` }}
+        className="absolute top-0 bottom-0 w-[1px] bg-white/40 z-20 will-change-[left] pointer-events-none"
+        style={{ left: `${sliderPos}%`, willChange: 'left' }}
       />
     </div>
   );
-};
+});
+BeforeAfterSlider.displayName = 'BeforeAfterSlider';
 
-/* ---------------- SLIDESHOW ROW ---------------- */
-const SlideshowRow = ({ images, activeIndex, folder, prefix }) => (
-  <div className="w-full flex justify-center mb-10 md:mb-16 px-[5%]">
-    <div className="relative overflow-hidden shadow-2xl w-full aspect-video md:aspect-auto md:h-[80vh]">
+/* Memoized SlideshowRow */
+const SlideshowRow = memo(({ images, activeIndex, folder, prefix }) => (
+  <div className="w-full flex justify-center mb-5 md:mb-16 px-[5%]">
+    <div className="relative overflow-hidden shadow-lg w-full aspect-video md:aspect-auto md:h-[80vh]" style={{ contain: 'layout style paint' }}>
       {images.map((img, i) => {
         const isCurrent = i === activeIndex % images.length;
 
         return (
           <div
-            key={i}
-            className="absolute inset-0"
+            key={`slideshow-${img.id}`}
+            className="absolute inset-0 transition-opacity duration-1000 will-change-[opacity]"
             style={{
               zIndex: isCurrent ? 20 : 10,
               opacity: isCurrent ? 1 : 0,
-              transition: "opacity 1000ms cubic-bezier(0.1, 1, 0.1, 1)",
+              willChange: isCurrent ? 'opacity' : 'auto',
             }}
           >
             <img
               src={`/assets/${folder}/${prefix}${img.id}.jpg`}
               loading="lazy"
-              alt=""
-              className="w-full h-full object-cover"
-              onError={(e) => (e.target.style.display = "none")}
+              decoding="async"
+              alt={`${folder} slideshow ${img.id}`}
+              className="w-full h-full object-cover transition-opacity will-change-[transform]"
               style={{
                 objectPosition: img.pos || "center",
+                animation: isCurrent ? 'cinematicSlow 15s ease-in-out infinite' : 'none',
+                willChange: isCurrent ? 'transform' : 'auto',
               }}
+              onError={(e) => { e.target.style.display = "none"; }}
             />
           </div>
         );
       })}
     </div>
   </div>
-);
+))
+SlideshowRow.displayName = 'SlideshowRow';
 
-
-/* ---------------- MAIN WORK GALLERY ---------------- */
+/* Main WorkGallery component */
 const WorkGallery = () => {
   const { categoryName } = useParams();
   const navigate = useNavigate();
@@ -263,15 +383,16 @@ const WorkGallery = () => {
       folder: "fashion",
       prefix: "f",
       layout: [
-        { type: "wide", id: 1, isVideo: false, pos: "90%" },
+        {
+          type: "wideSlideshow",
+          images: [1,],
+          pos: "50%",
+        },
         {
           type: "grid3",
-          ids: [
-            [4, 5, 9],
-            [8, 2, 6],
-            [7, 10, 3],
-          ],
-        },
+          ids: [[4, 5, 9], [8, 2, 6], [7, 10, 3]],
+          mobileIds: [4, 5, 9, 8, 2, 6, 7, 10, 3]
+        }
       ],
     },
 
@@ -280,7 +401,13 @@ const WorkGallery = () => {
       folder: "product",
       prefix: "p",
       layout: [
-        { type: "wide", id: 1, isVideo: true, fit: "cover" },
+        { 
+  type: "wideSlideshow", 
+  images: [
+    { id: 1, isVideo: true } // Wrap in an object so the component knows it's a video
+  ], 
+  pos: "50%" // You can adjust this to "90%" or "center" as needed
+},
         {
           type: "grid3",
           ids: [
@@ -288,6 +415,7 @@ const WorkGallery = () => {
             [3, 2],
             [10, 8],
           ],
+          mobileIds: [4, 8, 9, 10, 2, 3]
         },
         {
           type: "slideshow",
@@ -295,7 +423,7 @@ const WorkGallery = () => {
             { id: 5, pos: "center" },
             { id: 6, pos: "center" },
             { id: 7, pos: "center" },
-          ],
+          ], 
         },
       ],
     },
@@ -317,6 +445,7 @@ const WorkGallery = () => {
             [3, 8, 11, 14],
             [4, 9, 12, 15],
           ],
+           mobileIds: [2, 7, 10, 13, 3, 8, 11, 14, 4, 9, 12, 15]
         },
         {
           type: "slideshow",
@@ -353,6 +482,7 @@ const WorkGallery = () => {
             [3, 7],
             [4, 6],
           ],
+          mobileIds: [2, 5, 3, 7, 4, 6]
         },
       ],
     },
@@ -368,24 +498,43 @@ const WorkGallery = () => {
     },
   };
 
-  const categories = Object.keys(workData);
-  const currentIndex = categories.indexOf(categoryName);
-  const nextCategory = categories[(currentIndex + 1) % categories.length];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const categories = useMemo(() => Object.keys(workData), []);
+  const currentIndex = useMemo(() => categories.indexOf(categoryName), [categories, categoryName]);
+  const nextCategory = useMemo(() => categories[(currentIndex + 1) % categories.length], [categories, currentIndex]);
   const currentWork = workData[categoryName];
 
-  /* ---------------- EFFECTS ---------------- */
+  /* Effects */
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, [categoryName]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 500);
+    const timer = setTimeout(() => setIsLoading(false), 300);
     return () => clearTimeout(timer);
   }, [categoryName]);
 
+  // Optimized: Only increment activeIndex when document is visible
   useEffect(() => {
-    const timer = setInterval(() => setActiveIndex((prev) => prev + 1), 3000);
-    return () => clearInterval(timer);
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Stop animations when tab is not visible
+        return;
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    const timer = setInterval(() => {
+      if (!document.hidden) {
+        setActiveIndex((prev) => prev + 1);
+      }
+    }, 3500);
+    
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [categoryName]);
 
   if (!currentWork) return <div className="h-screen bg-black" />;
@@ -428,8 +577,8 @@ const WorkGallery = () => {
         }
         .nav-link:hover::after { width: 100%; }
         @media (max-width: 768px) {
-          .cinematic-media { animation: none; }
-          * { will-change: auto; }
+          .cinematic-media { animation: none !important; will-change: auto !important; }
+          * { will-change: auto !important; }
         }
         @media (prefers-reduced-motion: reduce) {
           * { animation: none !important; transition: none !important; }
@@ -516,16 +665,17 @@ const WorkGallery = () => {
 
         <Link to={`/${nextCategory}`} className="group inline-block">
           <h2
-                       className="text-3xl md:text-7xl font-bold uppercase tracking-tighter transition-all duration-700 group-hover:tracking-normal"
+            className="text-3xl md:text-7xl font-bold uppercase tracking-tighter transition-all duration-700 group-hover:tracking-normal will-change-[letter-spacing]"
             style={{
               fontFamily: "Syncopate, sans-serif",
-              fontSize: "clamp(1.5rem, 6vw, 5rem)"
+              fontSize: "clamp(1.5rem, 6vw, 5rem)",
+              willChange: 'letter-spacing',
             }}
           >
             {workData[nextCategory].title} →
           </h2>
 
-          <div className="h-[1px] w-0 group-hover:w-full bg-white mx-auto transition-all duration-1000 mt-4" />
+          <div className="h-[1px] w-0 group-hover:w-full bg-white mx-auto transition-all duration-1000 mt-4 will-change-[width]" />
         </Link>
       </footer>
     </div>
