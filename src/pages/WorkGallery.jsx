@@ -9,44 +9,45 @@ const Grid3Row = memo(({ ids, mobileIds, folder, prefix, activeIndex }) => {
   return (
     <div className="relative z-10 w-full">
 
-      {/* MOBILE VERSION (rewritten scrolling) */}
-      <div className="md:hidden w-full overflow-hidden py-4">
-        <style dangerouslySetInnerHTML={{ __html: `
-          @keyframes scrollLeft {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-20%); }
-          }
-          .animate-scroll {
-            display: flex;
-            width: max-content;
-            animation: scrollLeft 30s linear infinite;
-          }
-        `}} />
+      {/* MOBILE VERSION (scroll + auto-scroll) */}
+<div className="md:hidden w-full overflow-x-scroll overflow-y-hidden py-4"
+     style={{ WebkitOverflowScrolling: "touch" }}>
 
-        <h3 className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-4 px-[4%]">
-          HIGHLIGHTS
-        </h3>
+  <style dangerouslySetInnerHTML={{ __html: `
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-15%); }
+    }
+    .auto-scroll-track {
+      animation: scrollLeft 45s linear infinite;
+    }
+  `}} />
 
-        <div className="animate-scroll">
-          {displayIds.map((id, idx) => (
-            <div
-              key={`scroll-${id}-${idx}`}
-              className="w-[30vw] aspect-[2/3] px-1 flex-shrink-0"
-            >
-              <div className="w-full h-full overflow-hidden rounded-sm shadow-lg relative">
-                <img
-                  src={`/assets/${folder}/${prefix}${id}.jpg`}
-                  alt={`${folder} highlight ${id}`}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 w-full h-full object-cover"
-                  onError={(e) => { e.target.style.display = "none"; }}
-                />
-              </div>
-            </div>
-          ))}
+  <h3 className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-4 px-[4%]">
+    HIGHLIGHTS
+  </h3>
+
+  {/* SCROLLABLE WRAPPER */}
+  <div className="flex gap-0 w-max auto-scroll-track">
+    {displayIds.map((id, idx) => (
+      <div
+        key={`scroll-${id}-${idx}`}
+        className="w-[30vw] aspect-[2/3] px-1 flex-shrink-0"
+      >
+        <div className="w-full h-full overflow-hidden rounded-sm shadow-lg relative">
+          <img
+            src={`/assets/${folder}/${prefix}${id}.jpg`}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => { e.target.style.display = "none"; }}
+          />
         </div>
       </div>
+    ))}
+  </div>
+</div>
 
       {/* DESKTOP VERSION (optimized animations) */}
       <div className="hidden md:grid grid-cols-3 gap-2 md:gap-8 px-[5%] mb-12">
@@ -187,7 +188,7 @@ const WideSlideshowRow = memo(({ images, activeIndex, folder, prefix, pos }) => 
                 style={{ objectPosition: `center ${pos || "20%"}` }}
                 onError={(e) => { e.target.style.display = "none"; }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 from-5% via-black/20 via-40% to-transparent pointer-events-none" />
               </>
               )}
             </div>
@@ -235,7 +236,7 @@ const WideSlideshowRow = memo(({ images, activeIndex, folder, prefix, pos }) => 
                 style={{ objectPosition: `center ${pos || "20%"}` }}
                 onError={(e) => { e.target.style.display = "none"; }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent pointer-events-none" />
               </>
             )}
             </div>
@@ -333,7 +334,10 @@ BeforeAfterSlider.displayName = 'BeforeAfterSlider';
 /* Memoized SlideshowRow */
 const SlideshowRow = memo(({ images, activeIndex, folder, prefix }) => (
   <div className="w-full flex justify-center mb-5 md:mb-16 px-[5%]">
-    <div className="relative overflow-hidden shadow-lg w-full aspect-video md:aspect-auto md:h-[80vh]" style={{ contain: 'layout style paint' }}>
+    <div
+      className="relative overflow-hidden shadow-lg w-full aspect-video md:aspect-auto md:h-[80vh]"
+      style={{ contain: "layout style paint" }}
+    >
       {images.map((img, i) => {
         const isCurrent = i === activeIndex % images.length;
 
@@ -344,7 +348,6 @@ const SlideshowRow = memo(({ images, activeIndex, folder, prefix }) => (
             style={{
               zIndex: isCurrent ? 20 : 10,
               opacity: isCurrent ? 1 : 0,
-              willChange: isCurrent ? 'opacity' : 'auto',
             }}
           >
             <img
@@ -352,21 +355,22 @@ const SlideshowRow = memo(({ images, activeIndex, folder, prefix }) => (
               loading="lazy"
               decoding="async"
               alt={`${folder} slideshow ${img.id}`}
-              className="w-full h-full object-cover transition-opacity will-change-[transform]"
+              className="w-full h-full object-cover"
               style={{
                 objectPosition: img.pos || "center",
-                animation: isCurrent ? 'cinematicSlow 15s ease-in-out infinite' : 'none',
-                willChange: isCurrent ? 'transform' : 'auto',
               }}
-              onError={(e) => { e.target.style.display = "none"; }}
+              onError={(e) => {
+                e.target.style.display = "none";
+              }}
             />
           </div>
         );
       })}
     </div>
   </div>
-))
-SlideshowRow.displayName = 'SlideshowRow';
+));
+SlideshowRow.displayName = "SlideshowRow";
+
 
 /* Main WorkGallery component */
 const WorkGallery = () => {
