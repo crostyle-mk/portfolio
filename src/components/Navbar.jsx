@@ -109,7 +109,7 @@ html {
         .navbar-links {
           display: flex;
           align-items: center;
-          gap: 40px;
+          gap: 50px;
           list-style: none;
         }
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 
+const SHOW_HERO = false; // ← disable here
 const Hero = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef(null);
@@ -13,6 +14,7 @@ const Hero = () => {
       setIsPlaying(false);
     }
   };
+  if (!SHOW_HERO) return null;
 
   return (
     <>
@@ -130,7 +132,7 @@ const Hero = () => {
               loop
               playsInline
             >
-              <source src="assets/song.mp4" type="video/mp4" />
+              <source src="assets/logo.mp4" type="video/mp4" />
             </video>
             
             <div className="hero-overlay" />
