@@ -78,6 +78,7 @@ const Banner = () => {
         .video-background img {
           width: 100%;
           height: 100%;
+           transform: scale(1.05); /* prevents stretching flash */
           object-fit: cover;
           transform: scale(1.1);
           display: block;
@@ -169,15 +170,31 @@ const Banner = () => {
           letter-spacing: 0.3em;
         }
 
-        @media (max-width: 768px) {
-          .luxury-banner { min-height: 100svh; }
-          .main-name { font-size: clamp(1.2rem, 8vw, 1.5rem); }
-          .animate-up { animation: none !important; opacity: 1 !important; transform: none !important; }
-          .role-title { letter-spacing: 0.3em; margin: 10px 0 20px; }
-          .description-box { font-size: 0.8rem; max-width: 60%; }
-          .luxury-cta { display: none; } /* Remove Explore Portfolio on mobile */
-          .video-background video { transform: scale(1); }
-        }
+       @media (max-width: 768px) {
+  .luxury-banner { min-height: 100svh; }
+  .main-name { font-size: clamp(1.2rem, 8vw, 1.5rem); }
+  .animate-up { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .role-title { letter-spacing: 0.3em; margin: 10px 0 20px; }
+  .description-box { font-size: 0.8rem; max-width: 60%; }
+  .luxury-cta { display: none; }
+  .video-background video { transform: scale(1); }
+
+  /* ⭐ CINEMATIC MOBILE FIX */
+  @keyframes cinematicSaturate {
+  0% { filter: brightness(0.55) contrast(1.1) saturate(0.1); }
+  100% { filter: brightness(0.55) contrast(1.1) saturate(0.9); }
+}
+
+.video-background img {
+  animation: cinematicSaturate 1.4s ease-out forwards;
+}
+
+  .video-background img {
+    filter: brightness(0.60) contrast(1.1) saturate(0.9);
+    
+  }
+}
+
       `}</style>
 
       <section id="banner" className="luxury-banner">
