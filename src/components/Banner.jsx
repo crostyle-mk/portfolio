@@ -214,7 +214,7 @@ const Banner = () => {
           ) : (
             <>
               <video autoPlay loop muted playsInline poster="/assets/fallback-image.jpg">
-                <source src="assets/logo.mp4" type="video/mp4" />
+                <source src="/assets/logo.mp4" type="video/mp4" />
               </video>
               {/* VIGNETTE OVERLAY */}
               <div className="video-overlay"></div>
