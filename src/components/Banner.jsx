@@ -181,16 +181,13 @@ const Banner = () => {
 
   /* ⭐ CINEMATIC MOBILE FIX */
   @keyframes cinematicSaturate {
-  0% { filter: brightness(0.55) contrast(1.1) saturate(0.1); }
-  100% { filter: brightness(0.55) contrast(1.1) saturate(0.9); }
+  0% { filter: brightness(0.50) contrast(1) saturate(0.1); }
+  100% { filter: brightness(0.40) contrast(1) saturate(0.9); }
 }
 
 .video-background img {
-  animation: cinematicSaturate 1.4s ease-out forwards;
+  animation: cinematicSaturate 2s ease-out forwards;
 }
-
-  .video-background img {
-    filter: brightness(0.60) contrast(1.1) saturate(0.9);
     
   }
 }
