@@ -71,7 +71,7 @@ const Grid3Row = memo(({ ids, mobileIds, folder, prefix, activeIndex }) => {
                       opacity: isActive ? 1 : 0,
                       zIndex: isActive ? 2 : 1,
                       transitionDelay: isActive ? `${idx * 150}ms` : "0ms",
-                      animation: isActive ? 'cinematicSlow 3.8s ease-in-out infinite' : 'none',
+                       animation: 'none',
                       willChange: isActive ? 'transform' : 'auto',
                     }}
                     onError={(e) => { e.target.style.display = "none"; }}
@@ -150,46 +150,51 @@ const WideRow = memo(({ id, isVideo, pos, fit, folder, prefix }) => {
 WideRow.displayName = 'WideRow';
 
 /* Memoized WideSlideshowRow */
-const WideSlideshowRow = memo(({ images, activeIndex, folder, prefix, pos }) => (
+/* Memoized WideSlideshowRow */
+const WideSlideshowRow = memo(({ images, activeIndex, folder, prefix, pos, onNext }) => (
   <div className="w-full">
 
-    {/* MOBILE VERSION (optimized Netflix style) */}
+    {/* MOBILE VERSION */}
     <div className="relative w-full h-[20vh] mb-[-10vh] md:hidden" style={{ contain: 'layout' }}>
       <div className="absolute inset-0 z-0">
         {images.map((item, i) => {
           const id = typeof item === 'object' ? item.id : item;
           const isVideo = typeof item === 'object' ? item.isVideo : false;
           const isCurrent = i === activeIndex % images.length;
+          const itemPos = (typeof item === 'object' && item.pos) ? item.pos : pos;
+
+          // ⭐ FIX: Do NOT render video when not current (prevents jump)
+          if (!isCurrent && isVideo) return null;
+
           return (
             <div
               key={`mobile-slide-${id}`}
-              className="absolute inset-0 transition-opacity duration-1000 will-change-[opacity]"
-              style={{ opacity: isCurrent ? 1 : 0, willChange: isCurrent ? 'opacity' : 'auto' }}
+              className="absolute inset-0 transition-opacity duration-1000"
+              style={{ opacity: isCurrent ? 1 : 0, zIndex: isCurrent ? 10 : 0 }}
             >
-             {isVideo ? (
+              {isVideo ? (
                 <video
+                  key={`video-mobile-${id}-${isCurrent}`}   // force restart only when active
                   src={`/assets/${folder}/${prefix}${id}.mp4`}
-                  autoPlay
-                  loop
+                  onEnded={onNext}
+                  autoPlay={isCurrent}
                   muted
                   playsInline
+                  preload="auto"
                   className="h-full w-full object-cover"
-                  style={{ objectPosition: `center ${pos || "20%"}` }}
-                  onError={(e) => { e.target.style.display = "none"; }}
+                  style={{
+                    objectPosition: `center ${itemPos}`,
+                    opacity: isCurrent ? 1 : 0,
+                     transition: "opacity 1000ms ease",
+                  }}
                 />
               ) : (
-               <>
-              <img
-                src={`/assets/${folder}/${prefix}${id}.jpg`}
-                loading="lazy"
-                decoding="async"
-                alt={`${folder} slideshow ${id}`}
-                className="h-full w-full object-cover"
-                style={{ objectPosition: `center ${pos || "20%"}` }}
-                onError={(e) => { e.target.style.display = "none"; }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 from-5% via-black/20 via-40% to-transparent pointer-events-none" />
-              </>
+                <img
+                  src={`/assets/${folder}/${prefix}${id}.jpg`}
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: `center ${itemPos}` }}
+                  alt=""
+                />
               )}
             </div>
           );
@@ -197,48 +202,47 @@ const WideSlideshowRow = memo(({ images, activeIndex, folder, prefix, pos }) => 
       </div>
     </div>
 
-    {/* DESKTOP VERSION (optimized) */}
+    {/* DESKTOP VERSION */}
     <div className="hidden md:flex justify-center mb-16 px-[5%]">
-      <div className="relative overflow-hidden shadow-lg w-full aspect-video md:aspect-auto md:h-[60vh]" style={{ contain: 'layout style paint' }}>
+      <div className="relative overflow-hidden shadow-lg w-full aspect-video md:aspect-auto md:h-[60vh]">
         {images.map((item, i) => {
           const id = typeof item === 'object' ? item.id : item;
           const isVideo = typeof item === 'object' ? item.isVideo : false;
           const isCurrent = i === activeIndex % images.length;
+           const itemPos = (typeof item === 'object' && item.pos) ? item.pos : pos;
+
+          if (!isCurrent && isVideo) return null;
 
           return (
             <div
               key={`desktop-slide-${id}`}
-              className="absolute inset-0 transition-opacity duration-1000 will-change-[opacity]"
-              style={{
-                opacity: isCurrent ? 1 : 0,
-                willChange: isCurrent ? 'opacity' : 'auto',
-              }}
+              className="absolute inset-0 transition-opacity duration-1000"
+              style={{ opacity: isCurrent ? 1 : 0, zIndex: isCurrent ? 10 : 0 }}
             >
               {isVideo ? (
                 <video
+                  key={`video-desktop-${id}-${isCurrent}`}
                   src={`/assets/${folder}/${prefix}${id}.mp4`}
-                  autoPlay
-                  loop
+                  onEnded={onNext}
+                  autoPlay={isCurrent}
                   muted
                   playsInline
+                  preload="auto"
                   className="h-full w-full object-cover"
-                  style={{ objectPosition: `center ${pos || "20%"}` }}
-                  onError={(e) => { e.target.style.display = "none"; }}
+                  style={{
+                    objectPosition: `center ${itemPos}`,
+                     opacity: isCurrent ? 1 : 0,
+                     transition: "opacity 1000ms ease",
+                  }}
                 />
               ) : (
-                <>
-             <img
-                src={`/assets/${folder}/${prefix}${id}.jpg`}
-                loading="lazy"
-                decoding="async"
-                alt={`${folder} slideshow ${id}`}
-                className="h-full w-full object-cover"
-                style={{ objectPosition: `center ${pos || "20%"}` }}
-                onError={(e) => { e.target.style.display = "none"; }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent pointer-events-none" />
-              </>
-            )}
+                <img
+                  src={`/assets/${folder}/${prefix}${id}.jpg`}
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: `center ${itemPos}` }}
+                  alt=""
+                />
+              )}
             </div>
           );
         })}
@@ -247,7 +251,7 @@ const WideSlideshowRow = memo(({ images, activeIndex, folder, prefix, pos }) => 
 
   </div>
 ));
-WideSlideshowRow.displayName = 'WideSlideshowRow';
+
 
 
 /* Memoized GridComparisonRow */
@@ -381,7 +385,7 @@ const WorkGallery = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   /* ---------------- DATA ---------------- */
-  const workData = {
+ const workData = useMemo(() => ({
     fashion: {
       title: "Fashion & Lifestyle",
       folder: "fashion",
@@ -389,7 +393,10 @@ const WorkGallery = () => {
       layout: [
         {
           type: "wideSlideshow",
-          images: [1,],
+          images: [1,
+              { id: 13, isVideo: true, pos: "50%" },
+              { id: 12, isVideo: true, pos: "90%" }
+          ],
           pos: "50%",
         },
         {
@@ -476,8 +483,12 @@ const WorkGallery = () => {
       layout: [
         {
           type: "wideSlideshow",
-          images: [1, 8],
-          pos: "50%",
+          images: [
+             1,
+             8,
+             { id: 9, isVideo: true }
+          ],
+           pos: "50%",
         },
         {
           type: "grid3",
@@ -490,6 +501,7 @@ const WorkGallery = () => {
         },
       ],
     },
+    
 
     food: {
       title: "Food & Beverage",
@@ -500,48 +512,85 @@ const WorkGallery = () => {
         { type: "wide", id: 4, isVideo: true, fit: "contain" },
       ],
     },
-  };
+  }), []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const categories = useMemo(() => Object.keys(workData), []);
-  const currentIndex = useMemo(() => categories.indexOf(categoryName), [categories, categoryName]);
-  const nextCategory = useMemo(() => categories[(currentIndex + 1) % categories.length], [categories, currentIndex]);
-  const currentWork = workData[categoryName];
+  /* Inside WorkGallery Component */
 
-  /* Effects */
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, [categoryName]);
+// 1. Function to manually go to next slide (used by WideSlideshowRow onEnded)
+const handleNext = useCallback(() => {
+  setActiveIndex((prev) => prev + 1);
+}, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 300);
-    return () => clearTimeout(timer);
-  }, [categoryName]);
+// 2. Data + derived values
+const categories = useMemo(() => Object.keys(workData), [workData]);
+const currentIndex = useMemo(
+  () => categories.indexOf(categoryName),
+  [categories, categoryName]
+);
+const nextCategory = useMemo(
+  () => categories[(currentIndex + 1) % categories.length],
+  [categories, currentIndex]
+);
+const currentWork = workData[categoryName];
 
-  // Optimized: Only increment activeIndex when document is visible
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        // Stop animations when tab is not visible
+/* Effects */
+
+// Scroll to top on category change
+useEffect(() => {
+  window.scrollTo({ top: 0, behavior: "instant" });
+}, [categoryName]);
+
+// Small loading delay on category change
+useEffect(() => {
+  const timer = setTimeout(() => setIsLoading(false), 300);
+  return () => clearTimeout(timer);
+}, [categoryName]);
+
+// 3. Unified slideshow timer:
+// - Only runs when document is visible
+// - Skips advancing when current wideSlideshow item is a video
+useEffect(() => {
+  if (!currentWork) return;
+
+  const handleVisibilityChange = () => {
+    // We don't need to do anything here explicitly;
+    // the interval checks document.hidden on each tick.
+  };
+
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+
+  const timer = setInterval(() => {
+    // Pause auto-advance when tab is hidden
+    if (document.hidden) return;
+
+    // Find the wideSlideshow layout (if any)
+    const currentLayoutItem = currentWork.layout?.find(
+      (l) => l.type === "wideSlideshow"
+    );
+
+    if (currentLayoutItem && Array.isArray(currentLayoutItem.images)) {
+      const images = currentLayoutItem.images;
+      const currentSlide =
+        images[activeIndex % images.length];
+
+      // If current slide is a video, let onEnded handle advancing
+      if (currentSlide && currentSlide.isVideo) {
         return;
       }
-    };
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    const timer = setInterval(() => {
-      if (!document.hidden) {
-        setActiveIndex((prev) => prev + 1);
-      }
-    }, 3500);
-    
-    return () => {
-      clearInterval(timer);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [categoryName]);
+    }
 
-  if (!currentWork) return <div className="h-screen bg-black" />;
+    // Otherwise, advance every 3000ms
+    setActiveIndex((prev) => prev + 1);
+  }, 3000);
+
+  return () => {
+    clearInterval(timer);
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+  };
+}, [categoryName, activeIndex, currentWork]);
+
+if (!currentWork) return <div className="h-screen bg-black" />;
 
   /* ---------------- RENDER ---------------- */
   return (
@@ -648,6 +697,7 @@ const WorkGallery = () => {
                   {...row}
                   {...commonProps}
                   activeIndex={activeIndex}
+                  onNext={handleNext}
                 />
               );
 

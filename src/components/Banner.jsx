@@ -117,7 +117,7 @@ const Banner = () => {
           font-weight: 600;
           letter-spacing: -0.02em;
           text-transform: uppercase;
-          background: linear-gradient(to bottom, #ffffff 60%, #999999 100%);
+          background: linear-gradient(to bottom, #ffffff 70%, #999999 90%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           line-height: 1.1;
