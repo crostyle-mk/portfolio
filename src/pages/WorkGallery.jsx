@@ -1,80 +1,109 @@
-import React, { useEffect, useState, useMemo, useCallback, memo } from "react";
+import React, { useEffect, useState, useMemo, useCallback, memo, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
-/* Memoized Grid3Row to prevent unnecessary re-renders */
-const Grid3Row = memo(({ ids, mobileIds, folder, prefix, activeIndex }) => {
- const flatIds = useMemo(() => mobileIds || ids.map(item => (Array.isArray(item) ? item[0] : item)), [mobileIds, ids]);
+/* -----------------------------------------------------------
+   GRID3 ROW
+----------------------------------------------------------- */
+const Grid3Row = memo(({ ids, mobileIds, folder, prefix }) => {
+  const [localIndex, setLocalIndex] = useState(0);
+
+  // Desktop animation loop (every 3 seconds)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setLocalIndex((prev) => prev + 1);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const flatIds = useMemo(
+    () =>
+      mobileIds ||
+      ids.map((item) => (Array.isArray(item) ? item[0] : item)),
+    [mobileIds, ids]
+  );
+
   const displayIds = useMemo(() => [...flatIds, ...flatIds], [flatIds]);
 
   return (
     <div className="relative z-10 w-full">
 
-      {/* MOBILE VERSION (scroll + auto-scroll) */}
-<div className="md:hidden w-full overflow-x-scroll overflow-y-hidden py-4"
-     style={{ WebkitOverflowScrolling: "touch" }}>
-
-  <style dangerouslySetInnerHTML={{ __html: `
-    @keyframes scrollLeft {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-15%); }
-    }
-    .auto-scroll-track {
-      animation: scrollLeft 45s linear infinite;
-    }
-  `}} />
-
-  <h3 className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-4 px-[4%]">
-    HIGHLIGHTS
-  </h3>
-
-  {/* SCROLLABLE WRAPPER */}
-  <div className="flex gap-0 w-max auto-scroll-track">
-    {displayIds.map((id, idx) => (
+      {/* MOBILE (scrolling) */}
       <div
-        key={`scroll-${id}-${idx}`}
-        className="w-[30vw] aspect-[2/3] px-1 flex-shrink-0"
+        className="md:hidden w-full overflow-x-scroll overflow-y-hidden py-4"
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
-        <div className="w-full h-full overflow-hidden rounded-sm shadow-lg relative">
-          <img
-            src={`/assets/${folder}/${prefix}${id}.jpg`}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 w-full h-full object-cover"
-            onError={(e) => { e.target.style.display = "none"; }}
-          />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              @keyframes scrollLeft {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-15%); }
+              }
+              .auto-scroll-track {
+                animation: scrollLeft 45s linear infinite;
+              }
+            `,
+          }}
+        />
+
+        <h3 className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-4 px-[4%]">
+          HIGHLIGHTS
+        </h3>
+
+        <div className="flex gap-0 w-max auto-scroll-track">
+          {displayIds.map((id, idx) => (
+            <div
+              key={`scroll-${id}-${idx}`}
+              className="w-[30vw] aspect-[2/3] px-1 flex-shrink-0"
+            >
+              <div className="w-full h-full overflow-hidden rounded-sm shadow-lg relative">
+                <img
+                  src={`/assets/${folder}/${prefix}${id}.jpg`}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    ))}
-  </div>
-</div>
 
-      {/* DESKTOP VERSION (optimized animations) */}
+      {/* DESKTOP (animated) */}
       <div className="hidden md:grid grid-cols-3 gap-2 md:gap-8 px-[5%] mb-12">
         {ids.map((cellData, idx) => {
           const cellImages = Array.isArray(cellData) ? cellData : [cellData];
-          const localIndex = Math.floor((activeIndex + idx) % cellImages.length);
+          const indexToShow = localIndex % cellImages.length;
 
           return (
-            <div key={`grid-${idx}`} className="aspect-[2/3] overflow-hidden relative" style={{ contain: 'layout style paint' }}>
+            <div
+              key={`grid-${idx}`}
+              className="aspect-[2/3] overflow-hidden relative"
+              style={{ contain: "layout style paint" }}
+            >
               {cellImages.map((id, imgIdx) => {
-                const isActive = imgIdx === localIndex;
+                const isActive = imgIdx === indexToShow;
                 return (
                   <img
                     key={`img-${id}`}
                     src={`/assets/${folder}/${prefix}${id}.jpg`}
                     loading="lazy"
                     decoding="async"
-                    alt={`${folder} gallery item ${id}`}
-                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 will-change-[opacity]"
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
                     style={{
                       opacity: isActive ? 1 : 0,
                       zIndex: isActive ? 2 : 1,
                       transitionDelay: isActive ? `${idx * 150}ms` : "0ms",
-                       animation: 'none',
-                      willChange: isActive ? 'transform' : 'auto',
                     }}
-                    onError={(e) => { e.target.style.display = "none"; }}
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                    }}
                   />
                 );
               })}
@@ -82,20 +111,21 @@ const Grid3Row = memo(({ ids, mobileIds, folder, prefix, activeIndex }) => {
           );
         })}
       </div>
-
     </div>
   );
 });
-Grid3Row.displayName = 'Grid3Row';
 
-
-/* Memoized WideRow */
+/* -----------------------------------------------------------
+   WIDE ROW
+----------------------------------------------------------- */
 const WideRow = memo(({ id, isVideo, pos, fit, folder, prefix }) => {
   const isContained = fit === "contain";
 
   return (
     <div className="w-full flex justify-center mb-10 md:mb-16 px-[5%]">
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         @keyframes cinematicPulse {
           0% { transform: scale(1.01); }
           50% { transform: scale(1.05); }
@@ -105,7 +135,9 @@ const WideRow = memo(({ id, isVideo, pos, fit, folder, prefix }) => {
           animation: cinematicPulse 12s ease-in-out infinite;
           will-change: transform;
         }
-      `}} />
+      `,
+        }}
+      />
 
       <div
         className={`relative overflow-hidden shadow-lg transition-all duration-1000 ${
@@ -113,7 +145,7 @@ const WideRow = memo(({ id, isVideo, pos, fit, folder, prefix }) => {
             ? "w-auto h-[30vh] md:h-[60vh]"
             : "w-full aspect-video md:aspect-auto md:h-[60vh]"
         }`}
-        style={{ contain: 'layout style paint' }}
+        style={{ contain: "layout style paint" }}
       >
         {isVideo ? (
           <video
@@ -123,138 +155,204 @@ const WideRow = memo(({ id, isVideo, pos, fit, folder, prefix }) => {
             muted
             playsInline
             className="h-full w-full object-cover cinematic-media"
-            onError={(e) => { e.target.style.display = "none"; }}
-            style={{
-              objectPosition: `center ${pos || "50%"}`,
-              willChange: 'transform',
+            onError={(e) => {
+              e.target.style.display = "none";
             }}
+            style={{ objectPosition: `center ${pos || "50%"}` }}
           />
         ) : (
           <img
             src={`/assets/${folder}/${prefix}${id}.jpg`}
             loading="lazy"
             decoding="async"
-            alt={`${folder} wide media ${id}`}
+            alt=""
             className="h-full w-full object-cover cinematic-media"
-            onError={(e) => { e.target.style.display = "none"; }}
-            style={{
-              objectPosition: `center ${pos || "50%"}`,
-              willChange: 'transform',
+            onError={(e) => {
+              e.target.style.display = "none";
             }}
+            style={{ objectPosition: `center ${pos || "50%"}` }}
           />
         )}
       </div>
     </div>
   );
 });
-WideRow.displayName = 'WideRow';
 
-/* Memoized WideSlideshowRow */
-/* Memoized WideSlideshowRow */
-const WideSlideshowRow = memo(({ images, activeIndex, folder, prefix, pos, onNext }) => (
-  <div className="w-full">
+/* -----------------------------------------------------------
+   SLIDE (used by WideSlideshowRow)
+----------------------------------------------------------- */
+function Slide({ item, index, isCurrent, folder, prefix, pos, onNext }) {
+  const id = typeof item === "object" ? item.id : item;
+  const isVideo = typeof item === "object" ? item.isVideo : false;
+  const itemPos = typeof item === "object" && item.pos ? item.pos : pos;
 
-    {/* MOBILE VERSION */}
-    <div className="relative w-full h-[20vh] mb-[-10vh] md:hidden" style={{ contain: 'layout' }}>
-      <div className="absolute inset-0 z-0">
-        {images.map((item, i) => {
-          const id = typeof item === 'object' ? item.id : item;
-          const isVideo = typeof item === 'object' ? item.isVideo : false;
-          const isCurrent = i === activeIndex % images.length;
-          const itemPos = (typeof item === 'object' && item.pos) ? item.pos : pos;
+  const videoRef = useRef(null);
 
-          // ⭐ FIX: Do NOT render video when not current (prevents jump)
-          if (!isCurrent && isVideo) return null;
+  useEffect(() => {
+    if (!isVideo) return;
+    const v = videoRef.current;
+    if (!v) return;
 
-          return (
-            <div
-              key={`mobile-slide-${id}`}
-              className="absolute inset-0 transition-opacity duration-1000"
-              style={{ opacity: isCurrent ? 1 : 0, zIndex: isCurrent ? 10 : 0 }}
-            >
-              {isVideo ? (
-                <video
-                  key={`video-mobile-${id}-${isCurrent}`}   // force restart only when active
-                  src={`/assets/${folder}/${prefix}${id}.mp4`}
-                  onEnded={onNext}
-                  autoPlay={isCurrent}
-                  muted
-                  playsInline
-                  preload="auto"
-                  className="h-full w-full object-cover"
-                  style={{
-                    objectPosition: `center ${itemPos}`,
-                    opacity: isCurrent ? 1 : 0,
-                     transition: "opacity 1000ms ease",
-                  }}
-                />
-              ) : (
-                <img
-                  src={`/assets/${folder}/${prefix}${id}.jpg`}
-                  className="h-full w-full object-cover"
-                  style={{ objectPosition: `center ${itemPos}` }}
-                  alt=""
-                />
-              )}
-            </div>
-          );
-        })}
-      </div>
+    if (isCurrent) {
+      const p = v.play?.();
+      if (p?.catch) p.catch(() => {});
+    } else {
+      try {
+        v.pause();
+        v.currentTime = 0;
+      } catch {}
+    }
+  }, [isVideo, isCurrent, id]);
+
+  if (isVideo && !isCurrent) return null;
+
+  return (
+    <div
+      className="absolute inset-0 transition-opacity duration-1000"
+      style={{
+        opacity: isCurrent ? 1 : 0,
+        zIndex: isCurrent ? 10 : 0,
+        pointerEvents: isCurrent ? "auto" : "none",
+      }}
+    >
+      {isVideo ? (
+        <video
+          key={`vid-${id}`}
+          ref={videoRef}
+          src={`/assets/${folder}/${prefix}${id}.mp4`}
+          onEnded={onNext}
+          autoPlay
+          muted
+          playsInline
+          preload="auto"
+          className="h-full w-full object-cover"
+          style={{ objectPosition: `center ${itemPos}` }}
+        />
+      ) : (
+        <img
+          src={`/assets/${folder}/${prefix}${id}.jpg`}
+          className="h-full w-full object-cover"
+          style={{ objectPosition: `center ${itemPos}` }}
+          alt=""
+        />
+      )}
     </div>
+  );
+}
 
-    {/* DESKTOP VERSION */}
-    <div className="hidden md:flex justify-center mb-16 px-[5%]">
-      <div className="relative overflow-hidden shadow-lg w-full aspect-video md:aspect-auto md:h-[60vh]">
-        {images.map((item, i) => {
-          const id = typeof item === 'object' ? item.id : item;
-          const isVideo = typeof item === 'object' ? item.isVideo : false;
-          const isCurrent = i === activeIndex % images.length;
-           const itemPos = (typeof item === 'object' && item.pos) ? item.pos : pos;
-
-          if (!isCurrent && isVideo) return null;
-
-          return (
-            <div
-              key={`desktop-slide-${id}`}
-              className="absolute inset-0 transition-opacity duration-1000"
-              style={{ opacity: isCurrent ? 1 : 0, zIndex: isCurrent ? 10 : 0 }}
-            >
-              {isVideo ? (
-                <video
-                  key={`video-desktop-${id}-${isCurrent}`}
-                  src={`/assets/${folder}/${prefix}${id}.mp4`}
-                  onEnded={onNext}
-                  autoPlay={isCurrent}
-                  muted
-                  playsInline
-                  preload="auto"
-                  className="h-full w-full object-cover"
-                  style={{
-                    objectPosition: `center ${itemPos}`,
-                     opacity: isCurrent ? 1 : 0,
-                     transition: "opacity 1000ms ease",
-                  }}
-                />
-              ) : (
-                <img
-                  src={`/assets/${folder}/${prefix}${id}.jpg`}
-                  className="h-full w-full object-cover"
-                  style={{ objectPosition: `center ${itemPos}` }}
-                  alt=""
-                />
-              )}
-            </div>
-          );
-        })}
+/* -----------------------------------------------------------
+   WIDE SLIDESHOW ROW
+----------------------------------------------------------- */
+const WideSlideshowRow = memo(
+  ({ images, activeIndex, folder, prefix, pos, onNext }) => {
+    return (
+      <div className="w-full">
+        <div
+          className="
+            relative w-full 
+            h-[20vh] mb-[-10vh]
+            md:h-[60vh] md:mb-16 md:px-[5%]
+            overflow-hidden
+          "
+          style={{ contain: "layout" }}
+        >
+          <div className="relative w-full h-full shadow-lg overflow-hidden">
+            {images.map((item, i) => (
+              <Slide
+                key={`slide-${i}`}
+                item={item}
+                index={i}
+                isCurrent={i === activeIndex % images.length}
+                folder={folder}
+                prefix={prefix}
+                pos={pos}
+                onNext={onNext}
+              />
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
+    );
+  }
+);
 
-  </div>
-));
+/* -----------------------------------------------------------
+   WIDE SLIDESHOW CONTROLLER
+----------------------------------------------------------- */
+function WideSlideshowController({ currentWork, categoryName }) {
+  const [activeIndex, setActiveIndex] = useState(0);
 
+  const activeIndexRef = useRef(0);
+  const currentWorkRef = useRef(currentWork);
+  const lastAdvanceRef = useRef(0);
 
+  useEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
-/* Memoized GridComparisonRow */
+  useEffect(() => {
+    currentWorkRef.current = currentWork;
+  }, [currentWork]);
+
+  const onNext = useCallback(() => {
+    const now = Date.now();
+    if (now - lastAdvanceRef.current < 500) return;
+    lastAdvanceRef.current = now;
+    setActiveIndex((prev) => prev + 1);
+  }, []);
+
+  useEffect(() => {
+    if (!currentWorkRef.current) return;
+
+    const tick = () => {
+      if (document.hidden) return;
+
+      const layoutItem = currentWorkRef.current.layout.find(
+        (l) => l.type === "wideSlideshow"
+      );
+
+      const images = Array.isArray(layoutItem?.images)
+        ? layoutItem.images
+        : null;
+
+      if (!images || images.length === 0) return;
+
+      const idx = activeIndexRef.current % images.length;
+      const currentSlide = images[idx];
+
+      if (currentSlide?.isVideo) return;
+
+      setActiveIndex((prev) => prev + 1);
+    };
+
+    const timer = setInterval(tick, 3000);
+    return () => clearInterval(timer);
+  }, [categoryName]);
+
+  const layoutItem = currentWork.layout.find(
+    (l) => l.type === "wideSlideshow"
+  );
+
+  const images = layoutItem.images;
+  const folder = currentWork.folder;
+  const prefix = currentWork.prefix;
+  const pos = layoutItem.pos || "50%";
+
+  return (
+    <WideSlideshowRow
+      images={images}
+      activeIndex={activeIndex}
+      folder={folder}
+      prefix={prefix}
+      pos={pos}
+      onNext={onNext}
+    />
+  );
+}
+
+/* -----------------------------------------------------------
+   GRID COMPARISON
+----------------------------------------------------------- */
 const GridComparisonRow = memo(({ items, folder, prefix }) => (
   <div className="grid grid-cols-3 gap-2 md:gap-8 px-[2%] md:px-[5%] mb-12">
     {items.map((item, idx) => (
@@ -270,8 +368,10 @@ const GridComparisonRow = memo(({ items, folder, prefix }) => (
     ))}
   </div>
 ));
-GridComparisonRow.displayName = 'GridComparisonRow';
 
+/* -----------------------------------------------------------
+   BEFORE/AFTER SLIDER
+----------------------------------------------------------- */
 const BeforeAfterSlider = memo(({ before, after, folder }) => {
   const [sliderPos, setSliderPos] = useState(50);
 
@@ -301,45 +401,49 @@ const BeforeAfterSlider = memo(({ before, after, folder }) => {
       aria-valuemax={100}
       aria-valuenow={Math.round(sliderPos)}
       aria-label="Before and after comparison slider"
-      style={{ contain: 'layout style' }}
+      style={{ contain: "layout style" }}
     >
       <img
         src={`/assets/${folder}/${after}`}
         loading="lazy"
         decoding="async"
-        alt="After comparison"
+        alt=""
         className="absolute inset-0 w-full h-full object-cover"
-        onError={(e) => { e.target.style.display = "none"; }}
+        onError={(e) => {
+          e.target.style.display = "none";
+        }}
       />
 
       <div
-        className="absolute inset-0 w-full h-full z-10 will-change-[clip-path]"
-        style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)`, willChange: 'clip-path' }}
+        className="absolute inset-0 w-full h-full z-10"
+        style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
       >
         <img
           src={`/assets/${folder}/${before}`}
           loading="lazy"
           decoding="async"
-          alt="Before comparison"
+          alt=""
           className="w-full h-full object-cover"
-          onError={(e) => { e.target.style.display = "none"; }}
+          onError={(e) => {
+            e.target.style.display = "none";
+          }}
         />
       </div>
 
       <div
-        className="absolute top-0 bottom-0 w-[1px] bg-white/40 z-20 will-change-[left] pointer-events-none"
-        style={{ left: `${sliderPos}%`, willChange: 'left' }}
+        className="absolute top-0 bottom-0 w-[1px] bg-white/40 z-20 pointer-events-none"
+        style={{ left: `${sliderPos}%` }}
       />
     </div>
   );
 });
-BeforeAfterSlider.displayName = 'BeforeAfterSlider';
 
-/* Memoized SlideshowRow */
+/* -----------------------------------------------------------
+   SMALL SLIDESHOW ROW
+----------------------------------------------------------- */
 const SlideshowRow = memo(({ images, folder, prefix }) => {
   const [localIndex, setLocalIndex] = useState(0);
 
-  // Independent timer ONLY for this slideshow
   useEffect(() => {
     const timer = setInterval(() => {
       setLocalIndex((prev) => (prev + 1) % images.length);
@@ -360,7 +464,7 @@ const SlideshowRow = memo(({ images, folder, prefix }) => {
           return (
             <div
               key={`slideshow-${img.id}`}
-              className="absolute inset-0 transition-opacity duration-1000 will-change-[opacity]"
+              className="absolute inset-0 transition-opacity duration-1000"
               style={{
                 zIndex: isCurrent ? 20 : 10,
                 opacity: isCurrent ? 1 : 0,
@@ -370,11 +474,9 @@ const SlideshowRow = memo(({ images, folder, prefix }) => {
                 src={`/assets/${folder}/${prefix}${img.id}.jpg`}
                 loading="lazy"
                 decoding="async"
-                alt={`${folder} slideshow ${img.id}`}
+                alt=""
                 className="w-full h-full object-cover"
-                style={{
-                  objectPosition: img.pos || "center",
-                }}
+                style={{ objectPosition: img.pos || "center" }}
                 onError={(e) => {
                   e.target.style.display = "none";
                 }}
@@ -386,224 +488,179 @@ const SlideshowRow = memo(({ images, folder, prefix }) => {
     </div>
   );
 });
-SlideshowRow.displayName = "SlideshowRow";
 
-
-/* Main WorkGallery component */
+/* -----------------------------------------------------------
+   MAIN WORKGALLERY
+----------------------------------------------------------- */
 const WorkGallery = () => {
   const { categoryName } = useParams();
   const navigate = useNavigate();
 
-  const [activeIndex, setActiveIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   /* ---------------- DATA ---------------- */
- const workData = useMemo(() => ({
-    fashion: {
-      title: "Fashion & Lifestyle",
-      folder: "fashion",
-      prefix: "f",
-      layout: [
-        {
-          type: "wideSlideshow",
-          images: [1,
-              { id: 13, isVideo: true, pos: "50%" },
+  const workData = useMemo(
+    () => ({
+      fashion: {
+        title: "Fashion & Lifestyle",
+        folder: "fashion",
+        prefix: "f",
+        layout: [
+          {
+            type: "wideSlideshow",
+            images: [
+              1,
+                { id: 13, isVideo: true, pos: "50%" },
               { id: 12, isVideo: true, pos: "90%" }
-          ],
-          pos: "50%",
-        },
-        {
-          type: "grid3",
-          ids: [[4, 5, 9], [8, 2, 6], [7, 10, 3]],
-          mobileIds: [4, 5, 9, 8, 2, 6, 7, 10, 3]
-        }
-      ],
-    },
+            ],
+            pos: "50%",
+          },
+          {
+            type: "grid3",
+            ids: [
+              [4, 5, 9],
+              [8, 2, 6],
+              [7, 10, 3],
+            ],
+            mobileIds: [4, 5, 9, 8, 2, 6, 7, 10, 3],
+          },
+        ],
+      },
 
-    product: {
-      title: "Product & Brand",
-      folder: "product",
-      prefix: "p",
-      layout: [
-        { 
-  type: "wideSlideshow", 
-  images: [
-    { id: 1, isVideo: true } // Wrap in an object so the component knows it's a video
-  ], 
-  pos: "50%" // You can adjust this to "90%" or "center" as needed
-},
-        {
-          type: "grid3",
-          ids: [
-            [4, 9],
-            [3, 2],
-            [10, 8],
-          ],
-          mobileIds: [4, 8, 9, 10, 2, 3]
-        },
-        {
-          type: "slideshow",
-          images: [
-            { id: 5, pos: "center" },
-            { id: 6, pos: "center" },
-            { id: 7, pos: "center" },
-          ], 
-        },
-      ],
-    },
+      product: {
+        title: "Product & Brand",
+        folder: "product",
+        prefix: "p",
+        layout: [
+          {
+            type: "wideSlideshow",
+            images: [{ id: 1, isVideo: true }],
+            pos: "50%",
+          },
+          {
+            type: "grid3",
+            ids: [
+              [4, 9],
+              [3, 2],
+              [10, 8],
+            ],
+            mobileIds: [4, 8, 9, 10, 2, 3],
+          },
+          {
+            type: "slideshow",
+            images: [
+              { id: 5, pos: "center" },
+              { id: 6, pos: "center" },
+              { id: 7, pos: "center" },
+            ],
+          },
+        ],
+      },
 
-    events: {
-      title: "Events & Portraits",
-      folder: "events",
-      prefix: "e",
-      layout: [
-        {
-          type: "wideSlideshow",
-          images: [1, 22, 23, 24],
-          pos: "50%",
-        },
-        {
-          type: "grid3",
-          ids: [
-            [2, 7, 10, 13],
-            [3, 8, 11, 14],
-            [4, 9, 12, 15],
-          ],
-           mobileIds: [2, 7, 10, 13, 3, 8, 11, 14, 4, 9, 12, 15]
-        },
-        {
-          type: "slideshow",
-          images: [
-            { id: 5, pos: "center" },
-            { id: 6, pos: "center" },
-          ],
-        },
-        {
-          type: "gridComparison",
-          items: [
-            { before: 17, after: 16 },
-            { before: 19, after: 18 },
-            { before: 21, after: 20 },
-          ],
-        },
-      ],
-    },
+      events: {
+        title: "Events & Portraits",
+        folder: "events",
+        prefix: "e",
+        layout: [
+          {
+            type: "wideSlideshow",
+            images: [1, 22, 23, 24],
+            pos: "50%",
+          },
+          {
+            type: "grid3",
+            ids: [
+              [2, 7, 10, 13],
+              [3, 8, 11, 14],
+              [4, 9, 12, 15],
+            ],
+            mobileIds: [
+              2, 7, 10, 13, 3, 8, 11, 14, 4, 9, 12, 15,
+            ],
+          },
+          {
+            type: "slideshow",
+            images: [
+              { id: 5, pos: "center" },
+              { id: 6, pos: "center" },
+            ],
+          },
+          {
+            type: "gridComparison",
+            items: [
+              { before: 17, after: 16 },
+              { before: 19, after: 18 },
+              { before: 21, after: 20 },
+            ],
+          },
+        ],
+      },
 
-    street: {
-      title: "Street & Architecture",
-      folder: "street",
-      prefix: "s",
-      layout: [
-        {
-          type: "wideSlideshow",
-          images: [
-             1,
-             8,
-             { id: 9, isVideo: true }
-          ],
-           pos: "50%",
-        },
-        {
-          type: "grid3",
-          ids: [
-            [2, 5],
-            [3, 7],
-            [4, 6],
-          ],
-          mobileIds: [2, 5, 3, 7, 4, 6]
-        },
-      ],
-    },
-    
+      street: {
+        title: "Street & Architecture",
+        folder: "street",
+        prefix: "s",
+        layout: [
+          {
+            type: "wideSlideshow",
+            images: [
+              1,
+              8,
+              { id: 9, isVideo: true }
+            ],
+            pos: "50%",
+          },
+          {
+            type: "grid3",
+            ids: [
+              [2, 5],
+              [3, 7],
+              [4, 6],
+            ],
+            mobileIds: [2, 5, 3, 7, 4, 6],
+          },
+        ],
+      },
 
-    food: {
-      title: "Food & Beverage",
-      folder: "food",
-      prefix: "b",
-      layout: [
-        { type: "grid3", ids: [1, 2, 3] },
-        { type: "wide", id: 4, isVideo: true, fit: "contain" },
-      ],
-    },
-  }), []);
+      food: {
+        title: "Food & Beverage",
+        folder: "food",
+        prefix: "b",
+        layout: [
+          { type: "grid3", ids: [1, 2, 3] },
+          { type: "wide", id: 4, isVideo: true, fit: "contain" },
+        ],
+      },
+    }),
+    []
+  );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  /* Inside WorkGallery Component */
+  /* ---------------- CATEGORY LOGIC ---------------- */
+  const categories = useMemo(() => Object.keys(workData), [workData]);
 
-// 1. Function to manually go to next slide (used by WideSlideshowRow onEnded)
-const handleNext = useCallback(() => {
-  setActiveIndex((prev) => prev + 1);
-}, []);
+  const currentIndex = useMemo(
+    () => categories.indexOf(categoryName),
+    [categories, categoryName]
+  );
 
-// 2. Data + derived values
-const categories = useMemo(() => Object.keys(workData), [workData]);
-const currentIndex = useMemo(
-  () => categories.indexOf(categoryName),
-  [categories, categoryName]
-);
-const nextCategory = useMemo(
-  () => categories[(currentIndex + 1) % categories.length],
-  [categories, currentIndex]
-);
-const currentWork = workData[categoryName];
+  const nextCategory = useMemo(
+    () => categories[(currentIndex + 1) % categories.length],
+    [categories, currentIndex]
+  );
 
-/* Effects */
+  const currentWork = workData[categoryName];
 
-// Scroll to top on category change
-useEffect(() => {
-  window.scrollTo({ top: 0, behavior: "instant" });
-}, [categoryName]);
+  /* ---------------- EFFECTS ---------------- */
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [categoryName]);
 
-// Small loading delay on category change
-useEffect(() => {
-  const timer = setTimeout(() => setIsLoading(false), 300);
-  return () => clearTimeout(timer);
-}, [categoryName]);
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, [categoryName]);
 
-// 3. Unified slideshow timer:
-// - Only runs when document is visible
-// - Skips advancing when current wideSlideshow item is a video
-useEffect(() => {
-  if (!currentWork) return;
-
-  const handleVisibilityChange = () => {
-    // We don't need to do anything here explicitly;
-    // the interval checks document.hidden on each tick.
-  };
-
-  document.addEventListener("visibilitychange", handleVisibilityChange);
-
-  const timer = setInterval(() => {
-    // Pause auto-advance when tab is hidden
-    if (document.hidden) return;
-
-    // Find the wideSlideshow layout (if any)
-    const currentLayoutItem = currentWork.layout?.find(
-      (l) => l.type === "wideSlideshow"
-    );
-
-    if (currentLayoutItem && Array.isArray(currentLayoutItem.images)) {
-      const images = currentLayoutItem.images;
-      const currentSlide =
-        images[activeIndex % images.length];
-
-      // If current slide is a video, let onEnded handle advancing
-      if (currentSlide && currentSlide.isVideo) {
-        return;
-      }
-    }
-
-    // Otherwise, advance every 3000ms
-    setActiveIndex((prev) => prev + 1);
-  }, 3000);
-
-  return () => {
-    clearInterval(timer);
-    document.removeEventListener("visibilitychange", handleVisibilityChange);
-  };
-}, [categoryName, activeIndex, currentWork]);
-
-if (!currentWork) return <div className="h-screen bg-black" />;
+  if (!currentWork) return <div className="h-screen bg-black" />;
 
   /* ---------------- RENDER ---------------- */
   return (
@@ -617,40 +674,7 @@ if (!currentWork) return <div className="h-screen bg-black" />;
         </div>
       )}
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes cinematicSlow {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.03); }
-          100% { transform: scale(1); }
-        }
-        @keyframes cinematicPulse {
-          0% { transform: scale(1.01); }
-          50% { transform: scale(1.05); }
-          100% { transform: scale(1.01); }
-        }
-        .cinematic-media {
-          animation: cinematicPulse 12s ease-in-out infinite;
-          will-change: transform;
-        }
-        .nav-link { position: relative; display: inline-block; }
-        .nav-link::after {
-          content: '';
-          position: absolute;
-          width: 0; height: 1px;
-          bottom: -4px; left: 0;
-          background-color: white;
-          transition: width 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-        .nav-link:hover::after { width: 100%; }
-        @media (max-width: 768px) {
-          .cinematic-media { animation: none !important; will-change: auto !important; }
-          * { will-change: auto !important; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          * { animation: none !important; transition: none !important; }
-        }
-      `}} />
-
+      {/* HEADER */}
       <div className="px-[6%] mb-12 md:mb-24">
         <button
           onClick={() => navigate("/")}
@@ -671,7 +695,7 @@ if (!currentWork) return <div className="h-screen bg-black" />;
         </h1>
       </div>
 
-      {/* Dynamic Content */}
+      {/* CONTENT */}
       <div className="flex flex-col gap-y-12">
         {currentWork.layout.map((row, index) => {
           const commonProps = {
@@ -686,7 +710,7 @@ if (!currentWork) return <div className="h-screen bg-black" />;
                   key={index}
                   {...row}
                   {...commonProps}
-                  activeIndex={activeIndex}
+                  activeIndex={0}
                 />
               );
 
@@ -699,24 +723,25 @@ if (!currentWork) return <div className="h-screen bg-black" />;
                   key={index}
                   {...row}
                   {...commonProps}
-                  activeIndex={activeIndex}
                 />
               );
 
             case "wideSlideshow":
               return (
-                <WideSlideshowRow
+                <WideSlideshowController
                   key={index}
-                  {...row}
-                  {...commonProps}
-                  activeIndex={activeIndex}
-                  onNext={handleNext}
+                  currentWork={currentWork}
+                  categoryName={categoryName}
                 />
               );
 
             case "gridComparison":
               return (
-                <GridComparisonRow key={index} {...row} {...commonProps} />
+                <GridComparisonRow
+                  key={index}
+                  {...row}
+                  {...commonProps}
+                />
               );
 
             default:
@@ -725,6 +750,7 @@ if (!currentWork) return <div className="h-screen bg-black" />;
         })}
       </div>
 
+      {/* FOOTER */}
       <footer className="mt-40 mb-32 px-[6%] text-center">
         <p className="text-zinc-500 text-[10px] tracking-[0.5em] uppercase mb-6">
           Next Category
@@ -732,17 +758,16 @@ if (!currentWork) return <div className="h-screen bg-black" />;
 
         <Link to={`/${nextCategory}`} className="group inline-block">
           <h2
-            className="text-3xl md:text-7xl font-bold uppercase tracking-tighter transition-all duration-700 group-hover:tracking-normal will-change-[letter-spacing]"
+            className="text-3xl md:text-7xl font-bold uppercase tracking-tighter transition-all duration-700 group-hover:tracking-normal"
             style={{
               fontFamily: "Syncopate, sans-serif",
               fontSize: "clamp(1.5rem, 6vw, 5rem)",
-              willChange: 'letter-spacing',
             }}
           >
             {workData[nextCategory].title} →
           </h2>
 
-          <div className="h-[1px] w-0 group-hover:w-full bg-white mx-auto transition-all duration-1000 mt-4 will-change-[width]" />
+          <div className="h-[1px] w-0 group-hover:w-full bg-white mx-auto transition-all duration-1000 mt-4" />
         </Link>
       </footer>
     </div>
