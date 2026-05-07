@@ -336,43 +336,56 @@ const BeforeAfterSlider = memo(({ before, after, folder }) => {
 BeforeAfterSlider.displayName = 'BeforeAfterSlider';
 
 /* Memoized SlideshowRow */
-const SlideshowRow = memo(({ images, activeIndex, folder, prefix }) => (
-  <div className="w-full flex justify-center mb-5 md:mb-16 px-[5%]">
-    <div
-      className="relative overflow-hidden shadow-lg w-full aspect-video md:aspect-auto md:h-[80vh]"
-      style={{ contain: "layout style paint" }}
-    >
-      {images.map((img, i) => {
-        const isCurrent = i === activeIndex % images.length;
+const SlideshowRow = memo(({ images, folder, prefix }) => {
+  const [localIndex, setLocalIndex] = useState(0);
 
-        return (
-          <div
-            key={`slideshow-${img.id}`}
-            className="absolute inset-0 transition-opacity duration-1000 will-change-[opacity]"
-            style={{
-              zIndex: isCurrent ? 20 : 10,
-              opacity: isCurrent ? 1 : 0,
-            }}
-          >
-            <img
-              src={`/assets/${folder}/${prefix}${img.id}.jpg`}
-              loading="lazy"
-              decoding="async"
-              alt={`${folder} slideshow ${img.id}`}
-              className="w-full h-full object-cover"
+  // Independent timer ONLY for this slideshow
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setLocalIndex((prev) => (prev + 1) % images.length);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [images.length]);
+
+  return (
+    <div className="w-full flex justify-center mb-5 md:mb-16 px-[5%]">
+      <div
+        className="relative overflow-hidden shadow-lg w-full aspect-video md:aspect-auto md:h-[80vh]"
+        style={{ contain: "layout style paint" }}
+      >
+        {images.map((img, i) => {
+          const isCurrent = i === localIndex;
+
+          return (
+            <div
+              key={`slideshow-${img.id}`}
+              className="absolute inset-0 transition-opacity duration-1000 will-change-[opacity]"
               style={{
-                objectPosition: img.pos || "center",
+                zIndex: isCurrent ? 20 : 10,
+                opacity: isCurrent ? 1 : 0,
               }}
-              onError={(e) => {
-                e.target.style.display = "none";
-              }}
-            />
-          </div>
-        );
-      })}
+            >
+              <img
+                src={`/assets/${folder}/${prefix}${img.id}.jpg`}
+                loading="lazy"
+                decoding="async"
+                alt={`${folder} slideshow ${img.id}`}
+                className="w-full h-full object-cover"
+                style={{
+                  objectPosition: img.pos || "center",
+                }}
+                onError={(e) => {
+                  e.target.style.display = "none";
+                }}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
-  </div>
-));
+  );
+});
 SlideshowRow.displayName = "SlideshowRow";
 
 
