@@ -606,7 +606,11 @@ const WorkGallery = () => {
             images: [
               1,
               8,
-              { id: 9, isVideo: true }
+               { id: 9, isVideo: true },
+              10,
+              11,
+              12,
+              13,
             ],
             pos: "50%",
           },
