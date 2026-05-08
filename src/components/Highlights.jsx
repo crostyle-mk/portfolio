@@ -83,7 +83,7 @@ const Highlights = () => {
     <section className="py-10 md:py-20 bg-transparent relative overflow-hidden">
       <div className="px-[6%] mb-2 md:mb-10 text-center md:text-left">
         <h2
-          className="text-white text-4xl md:text-7xl font-bold uppercase tracking-tighter"
+          className="text-white text-3xl md:text-6xl font-bold uppercase tracking-tighter"
           style={{ fontFamily: "Syncopate, sans-serif" }}
         >
           Highlights

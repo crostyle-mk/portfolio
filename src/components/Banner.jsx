@@ -177,6 +177,7 @@ const Banner = () => {
   .role-title { letter-spacing: 0.3em; margin: 10px 0 20px; }
   .description-box { font-size: 0.8rem; max-width: 60%; }
   .luxury-cta { display: none; }
+   .premium-badge { font-size: 0.50rem; }
   .video-background video { transform: scale(1); }
 
   /* ⭐ CINEMATIC MOBILE FIX */
