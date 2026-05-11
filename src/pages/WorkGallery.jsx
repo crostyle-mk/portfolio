@@ -287,6 +287,10 @@ function WideSlideshowController({ currentWork, categoryName }) {
   const lastAdvanceRef = useRef(0);
 
   useEffect(() => {
+  setTimeout(() => setActiveIndex(1), 1000);
+}, []);
+
+  useEffect(() => {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
 
