@@ -2,19 +2,42 @@ import React, { useEffect, useState, useMemo, useCallback, memo, useRef } from "
 import { useParams, useNavigate, Link } from "react-router-dom";
 
 /* -----------------------------------------------------------
+   VIDEO VISIBILITY HOOK
+----------------------------------------------------------- */
+function useVideoVisibility() {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.25 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return [ref, visible];
+}
+
+
+/* -----------------------------------------------------------
    GRID3 ROW
 ----------------------------------------------------------- */
 const Grid3Row = memo(({ ids, mobileIds, folder, prefix }) => {
-  const [localIndex, setLocalIndex] = useState(0);
+  const [localIndex, setLocalIndex] = useState(1); // instant start
 
-  // Desktop animation loop (every 3 seconds)
   useEffect(() => {
     const timer = setInterval(() => {
       setLocalIndex((prev) => prev + 1);
     }, 3000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [ids]);
 
   const flatIds = useMemo(
     () =>
@@ -28,7 +51,7 @@ const Grid3Row = memo(({ ids, mobileIds, folder, prefix }) => {
   return (
     <div className="relative z-10 w-full">
 
-      {/* MOBILE (scrolling) */}
+      {/* MOBILE */}
       <div
         className="md:hidden w-full overflow-x-scroll overflow-y-hidden py-4"
         style={{ WebkitOverflowScrolling: "touch" }}
@@ -64,9 +87,6 @@ const Grid3Row = memo(({ ids, mobileIds, folder, prefix }) => {
                   loading="lazy"
                   decoding="async"
                   className="absolute inset-0 w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                  }}
                 />
               </div>
             </div>
@@ -74,7 +94,7 @@ const Grid3Row = memo(({ ids, mobileIds, folder, prefix }) => {
         </div>
       </div>
 
-      {/* DESKTOP (animated) */}
+      {/* DESKTOP */}
       <div className="hidden md:grid grid-cols-3 gap-2 md:gap-8 px-[5%] mb-12">
         {ids.map((cellData, idx) => {
           const cellImages = Array.isArray(cellData) ? cellData : [cellData];
@@ -101,9 +121,6 @@ const Grid3Row = memo(({ ids, mobileIds, folder, prefix }) => {
                       zIndex: isActive ? 2 : 1,
                       transitionDelay: isActive ? `${idx * 150}ms` : "0ms",
                     }}
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                    }}
                   />
                 );
               })}
@@ -114,6 +131,7 @@ const Grid3Row = memo(({ ids, mobileIds, folder, prefix }) => {
     </div>
   );
 });
+
 
 /* -----------------------------------------------------------
    WIDE ROW
@@ -187,51 +205,47 @@ function Slide({ item, index, isCurrent, folder, prefix, pos, onNext }) {
   const itemPos = typeof item === "object" && item.pos ? item.pos : pos;
 
   const videoRef = useRef(null);
+  const [containerRef, visible] = useVideoVisibility();
 
   useEffect(() => {
     if (!isVideo) return;
     const v = videoRef.current;
     if (!v) return;
 
-    if (isCurrent) {
-      const p = v.play?.();
-      if (p?.catch) p.catch(() => {});
+    if (visible && isCurrent) {
+      v.play().catch(() => {});
     } else {
-      try {
-        v.pause();
-        v.currentTime = 0;
-      } catch {}
+      v.pause();
     }
-  }, [isVideo, isCurrent, id]);
-
-  if (isVideo && !isCurrent) return null;
+  }, [visible, isCurrent, isVideo]);
 
   return (
     <div
-      className="absolute inset-0 transition-opacity duration-1000"
+      ref={containerRef}
+      className="absolute inset-0 transition-opacity duration-[900ms]"
       style={{
         opacity: isCurrent ? 1 : 0,
         zIndex: isCurrent ? 10 : 0,
-        pointerEvents: isCurrent ? "auto" : "none",
+        willChange: "opacity",
+        transform: "scale(1)", // no zoom
+        transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
       {isVideo ? (
         <video
-          key={`vid-${id}`}
           ref={videoRef}
           src={`/assets/${folder}/${prefix}${id}.mp4`}
-          onEnded={onNext}
-          autoPlay
           muted
           playsInline
-          preload="auto"
-          className="h-full w-full object-cover"
+          preload="metadata"
+          onEnded={onNext}
+          className="w-full h-full object-cover"
           style={{ objectPosition: `center ${itemPos}` }}
         />
       ) : (
         <img
           src={`/assets/${folder}/${prefix}${id}.jpg`}
-          className="h-full w-full object-cover"
+          className="w-full h-full object-cover"
           style={{ objectPosition: `center ${itemPos}` }}
           alt=""
         />
@@ -239,6 +253,7 @@ function Slide({ item, index, isCurrent, folder, prefix, pos, onNext }) {
     </div>
   );
 }
+
 
 /* -----------------------------------------------------------
    WIDE SLIDESHOW ROW
@@ -254,7 +269,7 @@ const WideSlideshowRow = memo(
             md:h-[60vh] md:mb-16 md:px-[5%]
             overflow-hidden
           "
-          style={{ contain: "layout" }}
+          style={{ contain: "layout paint style" }}
         >
           <div className="relative w-full h-full shadow-lg overflow-hidden">
             {images.map((item, i) => (
@@ -276,6 +291,7 @@ const WideSlideshowRow = memo(
   }
 );
 
+
 /* -----------------------------------------------------------
    WIDE SLIDESHOW CONTROLLER
 ----------------------------------------------------------- */
@@ -286,9 +302,11 @@ function WideSlideshowController({ currentWork, categoryName }) {
   const currentWorkRef = useRef(currentWork);
   const lastAdvanceRef = useRef(0);
 
+  // Instant first slide change
   useEffect(() => {
   setTimeout(() => setActiveIndex(1), 1000);
 }, []);
+
 
   useEffect(() => {
     activeIndexRef.current = activeIndex;
@@ -300,14 +318,12 @@ function WideSlideshowController({ currentWork, categoryName }) {
 
   const onNext = useCallback(() => {
     const now = Date.now();
-    if (now - lastAdvanceRef.current < 500) return;
+    if (now - lastAdvanceRef.current < 400) return;
     lastAdvanceRef.current = now;
     setActiveIndex((prev) => prev + 1);
   }, []);
 
   useEffect(() => {
-    if (!currentWorkRef.current) return;
-
     const tick = () => {
       if (document.hidden) return;
 
@@ -315,11 +331,8 @@ function WideSlideshowController({ currentWork, categoryName }) {
         (l) => l.type === "wideSlideshow"
       );
 
-      const images = Array.isArray(layoutItem?.images)
-        ? layoutItem.images
-        : null;
-
-      if (!images || images.length === 0) return;
+      const images = layoutItem?.images || [];
+      if (!images.length) return;
 
       const idx = activeIndexRef.current % images.length;
       const currentSlide = images[idx];
@@ -329,7 +342,7 @@ function WideSlideshowController({ currentWork, categoryName }) {
       setActiveIndex((prev) => prev + 1);
     };
 
-    const timer = setInterval(tick, 3000);
+    const timer = setInterval(tick, 2800);
     return () => clearInterval(timer);
   }, [categoryName]);
 
@@ -337,22 +350,18 @@ function WideSlideshowController({ currentWork, categoryName }) {
     (l) => l.type === "wideSlideshow"
   );
 
-  const images = layoutItem.images;
-  const folder = currentWork.folder;
-  const prefix = currentWork.prefix;
-  const pos = layoutItem.pos || "50%";
-
   return (
     <WideSlideshowRow
-      images={images}
+      images={layoutItem.images}
       activeIndex={activeIndex}
-      folder={folder}
-      prefix={prefix}
-      pos={pos}
+      folder={currentWork.folder}
+      prefix={currentWork.prefix}
+      pos={layoutItem.pos || "50%"}
       onNext={onNext}
     />
   );
 }
+
 
 /* -----------------------------------------------------------
    GRID COMPARISON

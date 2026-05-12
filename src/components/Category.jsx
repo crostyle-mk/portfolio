@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
       img: "/assets/fashion.jpg", 
       type: "cinematography", 
       active: true,
-      pos: "center 70%" 
+      pos: "center 75%" 
     },
     { 
       id: 2, 
