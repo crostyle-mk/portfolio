@@ -11,7 +11,7 @@ html, body, #root {
   overflow-x: hidden;
 
   /* SOLID CINEMATIC BACKGROUND */
-  background: #0f0e0c !important;
+  background: #101010 !important;
 }
 
 /* HIDE NATIVE SCROLLBAR (optional) */
