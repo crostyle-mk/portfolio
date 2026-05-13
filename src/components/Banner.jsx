@@ -4,7 +4,6 @@ const Banner = () => {
   const [scrollY, setScrollY] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Safe mobile detection (no window usage during initial render)
   useEffect(() => {
     const updateIsMobile = () => {
       if (typeof window !== "undefined") {
@@ -17,7 +16,6 @@ const Banner = () => {
     return () => window.removeEventListener("resize", updateIsMobile);
   }, []);
 
-  // Scroll parallax only on desktop
   useEffect(() => {
     if (isMobile) return;
 
@@ -25,9 +23,7 @@ const Banner = () => {
     const handleScroll = () => {
       if (rafId) cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
-        if (typeof window !== "undefined") {
-          setScrollY(window.scrollY);
-        }
+        setScrollY(window.scrollY);
       });
     };
 
@@ -56,7 +52,6 @@ const Banner = () => {
           background: #000;
         }
 
-        /* BACKGROUND CONTAINER */
         .video-background {
           position: absolute;
           top: 0;
@@ -67,29 +62,29 @@ const Banner = () => {
           pointer-events: none;
         }
 
-        .video-background video {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transform: scale(1.1); /* Slight zoom to prevent white edges during parallax */
-          display: block;
-        }
-
+        .video-background video,
         .video-background img {
           width: 100%;
           height: 100%;
-           transform: scale(1.05); /* prevents stretching flash */
           object-fit: cover;
-          transform: scale(1.1);
           display: block;
+          backface-visibility: hidden;
+          perspective: 1000;
         }
 
-        /* DARK OVERLAY FOR READABILITY */
+        .video-background video {
+          transform: scale(1.1);
+        }
+
+        .video-background img {
+          transform: scale(1.05);
+        }
+
         .video-overlay {
           position: absolute;
           inset: 0;
           background: radial-gradient(circle, rgba(0,0,0,0) 20%, rgba(0,0,0,0.4) 100%),
-              linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+                      linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
           z-index: 1;
         }
 
@@ -121,7 +116,7 @@ const Banner = () => {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           line-height: 1.1;
-          text-shadow: 0 0 20px rgba(255,255,255,0.25); /* Soft glow (Option A) */
+          text-shadow: 0 0 20px rgba(255,255,255,0.25);
         }
 
         .role-title {
@@ -170,33 +165,31 @@ const Banner = () => {
           letter-spacing: 0.3em;
         }
 
-       @media (max-width: 768px) {
-  .luxury-banner { min-height: 100svh; }
-  .main-name { font-size: clamp(1.2rem, 8vw, 1.5rem); }
-  .animate-up { animation: none !important; opacity: 1 !important; transform: none !important; }
-  .role-title { letter-spacing: 0.3em; margin: 10px 0 20px; }
-  .description-box { font-size: 0.8rem; max-width: 60%; }
-  .luxury-cta { display: none; }
-   .premium-badge { font-size: 0.50rem; }
-  .video-background video { transform: scale(1); }
+        @media (max-width: 768px) {
+          .luxury-banner { min-height: 100svh; }
+          .main-name { font-size: clamp(1.2rem, 8vw, 1.5rem); }
+          .animate-up { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .role-title { letter-spacing: 0.3em; margin: 10px 0 20px; }
+          .description-box { font-size: 0.8rem; max-width: 60%; }
+          .luxury-cta { display: none; }
+          .premium-badge { font-size: 0.50rem; }
 
-  /* ⭐ CINEMATIC MOBILE FIX */
-  @keyframes cinematicSaturate {
-  0% { filter: brightness(0.10) contrast(0.9) saturate(0.1); }
-  100% { filter: brightness(0.50) contrast(.9) saturate(0.9); }
-}
+          /* Remove heavy transforms on mobile LCP */
+          .video-background video { transform: scale(1); }
+          .video-background img { transform: scale(1); }
 
-.video-background img {
-  animation: cinematicSaturate 2s ease-out forwards;
-}
-    
-  }
-}
+          @keyframes cinematicSaturate {
+            0% { filter: brightness(0.10) contrast(0.9) saturate(0.1); }
+            100% { filter: brightness(0.50) contrast(.9) saturate(0.9); }
+          }
 
+          .video-background img {
+            animation: cinematicSaturate 2s ease-out forwards;
+          }
+        }
       `}</style>
 
       <section id="banner" className="luxury-banner">
-        {/* VIDEO BACKGROUND CONTAINER */}
         <div
           className="video-background"
           style={{
@@ -205,19 +198,26 @@ const Banner = () => {
         >
           {isMobile ? (
             <>
-              {/* Mobile image (public-assets-banner) */}
               <img
-                src="/assets/banner-mobile.jpg" // your public-assets-banner image
+                src="/assets/banner-mobile.jpg"
                 alt="Cinematic mobile background"
+                fetchPriority="high"
+                loading="eager"
               />
               <div className="video-overlay"></div>
             </>
           ) : (
             <>
-              <video autoPlay loop muted playsInline poster="/assets/fallback-image.jpg">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                poster="/assets/fallback-image.jpg"
+              >
                 <source src="/assets/Logo.mp4" type="video/mp4" />
               </video>
-              {/* VIGNETTE OVERLAY */}
               <div className="video-overlay"></div>
             </>
           )}
