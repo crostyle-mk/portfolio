@@ -350,15 +350,53 @@ function WideSlideshowController({ currentWork, categoryName }) {
     (l) => l.type === "wideSlideshow"
   );
 
+
   return (
-    <WideSlideshowRow
-      images={layoutItem.images}
-      activeIndex={activeIndex}
-      folder={currentWork.folder}
-      prefix={currentWork.prefix}
-      pos={layoutItem.pos || "50%"}
-      onNext={onNext}
-    />
+    <div className="relative flex flex-col items-center w-full">
+
+      {/* SLIDESHOW */}
+      <WideSlideshowRow
+        images={layoutItem.images}
+        activeIndex={activeIndex}
+        folder={currentWork.folder}
+        prefix={currentWork.prefix}
+        pos={layoutItem.pos || "50%"}
+        onNext={onNext}
+      />
+
+ {/* DOT INDICATORS */}
+<div
+  className={`
+    flex justify-center gap-3 z-30
+    absolute left-1/2 -translate-x-1/2
+
+    /* Mobile: move DOWN */
+    bottom-2 translate-y-20
+
+    /* Desktop: move UP */
+    md:bottom-4 md:translate-y-[-6px]
+  `}
+>
+  {layoutItem.images.map((_, i) => {
+    const totalImages = layoutItem.images.length;
+    const isActive = i === activeIndex % totalImages;
+
+    return (
+      <div
+        key={i}
+        onClick={() => setActiveIndex(i)}
+        className={`
+          w-1 h-1 md:w-2 md:h-2 rounded-full cursor-pointer
+          transition-all duration-300
+          ${isActive
+            ? "bg-white scale-125"
+            : "bg-white/30"}
+        `}
+      />
+    );
+  })}
+</div>
+    </div>
   );
 }
 
