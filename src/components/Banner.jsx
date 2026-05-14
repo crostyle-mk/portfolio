@@ -213,8 +213,8 @@ const Banner = () => {
                 loop
                 muted
                 playsInline
-                preload="auto"
-                poster="/assets/fallback-image.jpg"
+                preload="metadata"                 // 🔥 CHANGE 1: don’t block LCP
+                poster="/assets/banner-desktop.webp" // 🔥 CHANGE 2: fast poster
               >
                 <source src="/assets/Logo.mp4" type="video/mp4" />
               </video>

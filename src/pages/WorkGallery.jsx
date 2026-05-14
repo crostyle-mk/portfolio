@@ -682,8 +682,6 @@ const WorkGallery = () => {
         folder: "food",
         prefix: "b",
         layout: [
-          { type: "grid3", ids: [1, 2, 3] },
-          { type: "wide", id: 4, isVideo: true, fit: "contain" },
         ],
       },
     }),
@@ -805,26 +803,50 @@ const WorkGallery = () => {
         })}
       </div>
 
-      {/* FOOTER */}
-      <footer className="mt-40 mb-32 px-[6%] text-center">
-        <p className="text-zinc-500 text-[10px] tracking-[0.5em] uppercase mb-6">
-          Next Category
-        </p>
+{/* FOOTER */}
+<footer
+  className="
+    text-center px-[6%]
 
-        <Link to={`/${nextCategory}`} className="group inline-block">
-          <h2
-            className="text-3xl md:text-7xl font-bold uppercase tracking-tighter transition-all duration-700 group-hover:tracking-normal"
-            style={{
-              fontFamily: "Syncopate, sans-serif",
-              fontSize: "clamp(1.5rem, 6vw, 5rem)",
-            }}
-          >
-            {workData[nextCategory].title} →
-          </h2>
+    /* Mobile spacing */
+    mt-10 mb-10
 
-          <div className="h-[1px] w-0 group-hover:w-full bg-white mx-auto transition-all duration-1000 mt-4" />
-        </Link>
-      </footer>
+    /* Desktop spacing */
+    md:mt-40 md:mb-32
+  "
+>
+  <p
+  className="
+    text-zinc-300 uppercase
+
+    /* Mobile */
+    text-[6px] tracking-[0.50em] mb-1
+
+    /* Desktop */
+    md:text-[10px] md:tracking-[0.5em] md:mb-6
+  "
+>
+  Next Category
+</p>
+
+  <Link to={`/${nextCategory}`} className="group inline-block">
+    <h2
+      className="
+        text-3xl md:text-7xl font-bold uppercase tracking-tighter
+        transition-all duration-700 group-hover:tracking-normal
+      "
+      style={{
+        fontFamily: "Syncopate, sans-serif",
+        fontSize: "clamp(1.5rem, 3vw, 5rem)",
+      }}
+    >
+      {workData[nextCategory].title} →
+    </h2>
+
+    <div className="h-[1px] w-0 group-hover:w-full bg-white mx-auto transition-all duration-1000 mt-4" />
+  </Link>
+</footer>
+
     </div>
   );
 };
