@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import styles from "./Highlights.module.css";
 
 const Highlights = () => {
   const scrollRef = useRef(null);
@@ -22,7 +23,6 @@ const Highlights = () => {
     { id: "h6", src: "h6.jpg", format: "portrait" },
   ];
 
-  // Arrow scroll (programmatic only)
   const scroll = (direction) => {
     if (!scrollRef.current) return;
     const scrollAmount = isMobile ? 292 : 512;
@@ -32,7 +32,6 @@ const Highlights = () => {
     });
   };
 
-  // Active index update (throttled with RAF)
   const handleScroll = useCallback(() => {
     if (rafId.current) return;
 
@@ -66,7 +65,6 @@ const Highlights = () => {
     });
   }, []);
 
-  // Attach scroll listener (for arrow scroll + mobile scroll)
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
@@ -95,18 +93,18 @@ const Highlights = () => {
           <>
             <button
               onClick={() => scroll("left")}
-              className="absolute left-6 top-1/2 -translate-y-1/2 z-[100] p-5 rounded-full border border-white/10 text-white hover:bg-white hover:text-black transition-all bg-black/40 backdrop-blur-md"
+              className={styles.arrowButton}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="m15 18-6-6 6-6" />
               </svg>
             </button>
 
             <button
               onClick={() => scroll("right")}
-              className="absolute right-6 top-1/2 -translate-y-1/2 z-[100] p-5 rounded-full border border-white/10 text-white hover:bg-white hover:text-black transition-all bg-black/40 backdrop-blur-md"
+              className={`${styles.arrowButton} ${styles.rightArrow}`}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="m9 18 6-6-6-6" />
               </svg>
             </button>
@@ -141,10 +139,9 @@ const Highlights = () => {
                 }}
               >
                 <div
-                  className={`absolute inset-0 rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl 
-                    transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-[transform,opacity]
-                    ${isActive ? "z-50 opacity-100 scale-105 md:scale-110" : "z-10 opacity-20 scale-[0.9]"}
-                  `}
+                  className={`${styles.card} ${
+                    isActive ? styles.cardActive : styles.cardInactive
+                  }`}
                   style={{
                     width: isActive && isLandscape ? (isMobile ? "130%" : "160%") : "95%",
                     left: isActive && isLandscape ? (isMobile ? "-15%" : "-30%") : "0%",

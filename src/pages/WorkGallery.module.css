@@ -1,0 +1,115 @@
+/* Keyframes */
+@keyframes scrollLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-15%); }
+}
+
+@keyframes cinematicPulse {
+  0% { transform: scale(1.01); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1.01); }
+}
+
+/* Auto-scrolling track (mobile highlights) */
+.autoScrollTrack {
+  animation: scrollLeft 45s linear infinite;
+}
+
+/* Cinematic media (wide row + slideshow) */
+.cinematicMedia {
+  animation: cinematicPulse 12s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Grid fade images */
+.gridImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 1s ease;
+}
+
+/* Active/inactive states */
+.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.inactive {
+  opacity: 0;
+  z-index: 1;
+}
+
+/* Wide slideshow slide */
+.slide {
+  position: absolute;
+  inset: 0;
+  transition: opacity 900ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+.slideActive {
+  opacity: 1;
+  z-index: 10;
+}
+
+.slideInactive {
+  opacity: 0;
+  z-index: 0;
+}
+
+/* Slideshow row (small slideshow) */
+.smallSlide {
+  position: absolute;
+  inset: 0;
+  transition: opacity 1s ease;
+}
+
+.smallSlideActive {
+  opacity: 1;
+  z-index: 20;
+}
+
+.smallSlideInactive {
+  opacity: 0;
+  z-index: 10;
+}
+
+/* Before/after slider */
+.beforeAfterContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: col-resize;
+  user-select: none;
+  contain: layout style;
+}
+
+.beforeAfterClip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.beforeAfterDivider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255,255,255,0.4);
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* Contain helpers */
+.containAll {
+  contain: layout style paint;
+}
+
+.containLayout {
+  contain: layout style;
+}

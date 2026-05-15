@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Outfit:wght@100;300;400;600&display=swap');
+
+/* CONTACT CONTAINER */
+.contactContainer {
+  position: relative;
+  width: 100%;
+  min-height: 45vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 0 60px 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+.contactWrapper {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 2500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* LABEL */
+.ctaLabel {
+  font-family: 'Syncopate', sans-serif;
+  font-size: clamp(2rem, 2vw, 6rem);
+  font-weight: 400;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 80px;
+  text-align: left;
+  width: 100%;
+}
+
+/* SOCIAL ICONS */
+.socialIcons {
+  display: flex;
+  justify-content: center;
+  gap: clamp(20px, 5vw, 50px);
+  margin-bottom: 120px;
+  width: 100%;
+}
+
+.socialIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(50px, 8vw, 85px);
+  height: clamp(50px, 8vw, 85px);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  border-radius: 50%;
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  text-decoration: none;
+}
+
+.socialIcon:hover {
+  background: #ffffff;
+  color: #000000;
+  transform: translateY(-10px) scale(1.1);
+}
+
+/* FOOTER */
+.copyrightArea {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 2500px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.60rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 40px;
+  opacity: 0.6;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .contactContainer {
+    padding: 10px 0 10px 0;
+  }
+
+  .ctaLabel {
+    text-align: center;
+    font-size: 1.03rem;
+    margin-bottom: 50px;
+  }
+
+  .socialIcons {
+    gap: 15px;
+    margin-bottom: 80px;
+  }
+
+  .socialIcon {
+    width: 55px;
+    height: 55px;
+    font-size: 1.3rem;
+  }
+
+  .copyrightArea {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    text-align: center;
+    letter-spacing: 0.2em;
+    font-size: 0.65rem;
+  }
+}

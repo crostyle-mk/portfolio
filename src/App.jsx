@@ -33,11 +33,12 @@ function App() {
               path="/" 
               element={
                 <main>
-                  <Banner /> 
+                  <Banner />
+                   <About /> 
                   <Hero /> 
                   <Category />
                   <Highlights />
-                  <About />
+                 
                   <Contact />
                 </main>
               } 
