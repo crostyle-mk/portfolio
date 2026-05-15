@@ -508,7 +508,7 @@ const WorkGallery = () => {
             type: "slideshow",
             images: [
               { id: 5, pos: "center" },
-                            { id: 7, pos: "center" },
+              { id: 6, pos: "center" },
             ],
           },
           {
