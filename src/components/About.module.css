@@ -14,13 +14,13 @@
 .isVisible .aboutTitle {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 0.3s;
+  transition-delay: 0.2s;
 }
 
 .isVisible .bodyPara {
   opacity: 0.92;
   transform: translateY(0);
-  transition-delay: 0.5s;
+  transition-delay: 0.4s;
 }
 
 :root {

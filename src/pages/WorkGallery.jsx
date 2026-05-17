@@ -435,9 +435,7 @@ const WorkGallery = () => {
           {
             type: "wideSlideshow",
             images: [
-              1,
-              { id: 13, isVideo: true, pos: "50%" },
-              { id: 12, isVideo: true, pos: "90%" }
+              1,13,
             ],
             pos: "50%",
           },
