@@ -335,24 +335,28 @@ const GridComparisonRow = memo(({ items, folder, prefix }) => (
 /* -----------------------------------------------------------
    WIDE SLIDESHOW CONTROLLER
 ----------------------------------------------------------- */
-function WideSlideshowController({ currentWork, categoryName }) {
+function WideSlideshowController({ currentWork, layoutItem, categoryName }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const activeIndexRef = useRef(0);
-  const currentWorkRef = useRef(currentWork);
   const lastAdvanceRef = useRef(0);
+  const imagesRef = useRef(layoutItem.images || []);
 
+  // When layoutItem changes (new slideshow), reset images + index
+  useEffect(() => {
+    imagesRef.current = layoutItem.images || [];
+    setActiveIndex(0);
+  }, [layoutItem]);
+
+  // First auto‑advance
   useEffect(() => {
     setTimeout(() => setActiveIndex(1), 1000);
   }, []);
 
+  // Keep ref synced
   useEffect(() => {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
-
-  useEffect(() => {
-    currentWorkRef.current = currentWork;
-  }, [currentWork]);
 
   const onNext = useCallback(() => {
     const now = Date.now();
@@ -361,12 +365,12 @@ function WideSlideshowController({ currentWork, categoryName }) {
     setActiveIndex((prev) => prev + 1);
   }, []);
 
+  // Autoplay
   useEffect(() => {
     const tick = () => {
       if (document.hidden) return;
 
-      const layoutItem = currentWorkRef.current.layout.find((l) => l.type === "wideSlideshow");
-      const images = layoutItem?.images || [];
+      const images = imagesRef.current;
       if (!images.length) return;
 
       const idx = activeIndexRef.current % images.length;
@@ -381,7 +385,7 @@ function WideSlideshowController({ currentWork, categoryName }) {
     return () => clearInterval(timer);
   }, [categoryName]);
 
-  const layoutItem = currentWork.layout.find((l) => l.type === "wideSlideshow");
+  if (!layoutItem || !layoutItem.images) return null;
 
   return (
     <div className="relative flex flex-col items-center w-full">
@@ -397,8 +401,8 @@ function WideSlideshowController({ currentWork, categoryName }) {
       {/* DOTS */}
       <div className="flex justify-center gap-3 z-30 absolute left-1/2 -translate-x-1/2 bottom-2 translate-y-20 md:bottom-4 md:translate-y-[-6px]">
         {layoutItem.images.map((_, i) => {
-          const totalImages = layoutItem.images.length;
-          const isActive = i === activeIndex % totalImages;
+          const total = layoutItem.images.length;
+          const isActive = i === activeIndex % total;
 
           return (
             <div
@@ -414,6 +418,7 @@ function WideSlideshowController({ currentWork, categoryName }) {
     </div>
   );
 }
+
 
 /* -----------------------------------------------------------
    MAIN WORKGALLERY
@@ -435,7 +440,7 @@ const WorkGallery = () => {
           {
             type: "wideSlideshow",
             images: [
-              1,13,
+              1,
             ],
             pos: "50%",
           },
@@ -447,6 +452,19 @@ const WorkGallery = () => {
               [7, 10, 8],
             ],
             mobileIds: [4, 5, 9, 8, 2, 6, 7, 10, 3],
+          },
+          {
+            type: "wideSlideshow",
+            images: [
+              13, 
+            ],
+          },
+           {
+            type: "grid3",
+            ids: [
+              [14], [15], [16]
+            ],
+            mobileIds: [14, 15, 16],
           },
         ],
       },
@@ -655,6 +673,7 @@ const WorkGallery = () => {
                 <WideSlideshowController
                   key={index}
                   currentWork={currentWork}
+                   layoutItem={row} 
                   categoryName={categoryName}
                 />
               );
