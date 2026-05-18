@@ -105,7 +105,7 @@
 
 /* MOBILE VERSION */
 @media (max-width: 900px) {
-  :root { --about-gap: 30px; }
+  :root { --about-gap: 60px; }
 
   .aboutContainer {
     min-height: 35vh;
@@ -130,7 +130,7 @@
     font-size: 1.1rem;
     letter-spacing: 0.22em;
     text-indent: 0.22em;
-    margin-bottom: 6px;
+    margin-bottom: 1px;
     line-height: 1.1;
     font-weight: 400;
     opacity: 0.95;
