@@ -78,7 +78,7 @@ const Highlights = () => {
     : `calc((100vw - 500px) / 2)`;
 
   return (
-    <section className="py-10 md:py-20 bg-transparent relative overflow-hidden">
+    <section id="highlights" className="py-10 md:py-20 bg-transparent relative overflow-hidden">
       <div className="px-[6%] mb-2 md:mb-10 text-center md:text-left">
         <h2
           className="text-white text-3xl md:text-6xl font-bold uppercase tracking-tighter"

@@ -693,41 +693,44 @@ const WorkGallery = () => {
         })}
       </div>
 
-      {/* FOOTER */}
-      <footer
-        className="
-          text-center px-[6%]
-          mt-10 mb-10
-          md:mt-40 md:mb-32
-        "
+     {/* FOOTER */}
+<footer className="text-center px-[6%] mt-10 mb-10 md:mt-40 md:mb-32">
+  {nextCategory === "food" ? (
+    /* Food category is disabled → send user to Highlights on Home */
+    <Link to="/#highlights" className="group inline-block">
+      <p className="text-zinc-300 uppercase text-[6px] tracking-[0.50em] mb-1 md:text-[10px] md:tracking-[0.5em] md:mb-6">
+        Return Home
+      </p>
+      <h2
+        className="text-3xl md:text-7xl font-bold uppercase tracking-tighter transition-all duration-700 group-hover:tracking-normal"
+        style={{
+          fontFamily: "Syncopate, sans-serif",
+          fontSize: "clamp(1.5rem, 3vw, 5rem)",
+        }}
       >
-        <p
-          className="
-            text-zinc-300 uppercase
-            text-[6px] tracking-[0.50em] mb-1
-            md:text-[10px] md:tracking-[0.5em] md:mb-6
-          "
-        >
-          Next Category
-        </p>
-
-        <Link to={`/${nextCategory}`} className="group inline-block">
-          <h2
-            className="
-              text-3xl md:text-7xl font-bold uppercase tracking-tighter
-              transition-all duration-700 group-hover:tracking-normal
-            "
-            style={{
-              fontFamily: "Syncopate, sans-serif",
-              fontSize: "clamp(1.5rem, 3vw, 5rem)",
-            }}
-          >
-            {workData[nextCategory].title} →
-          </h2>
-
-          <div className="h-[1px] w-0 group-hover:w-full bg-white mx-auto transition-all duration-1000 mt-4" />
-        </Link>
-      </footer>
+        Highlights →
+      </h2>
+      <div className="h-[1px] w-0 group-hover:w-full bg-white mx-auto transition-all duration-1000 mt-4" />
+    </Link>
+  ) : (
+    /* Normal next category */
+    <Link to={`/${nextCategory}`} className="group inline-block">
+      <p className="text-zinc-300 uppercase text-[6px] tracking-[0.50em] mb-1 md:text-[10px] md:tracking-[0.5em] md:mb-6">
+        Next Category
+      </p>
+      <h2
+        className="text-3xl md:text-7xl font-bold uppercase tracking-tighter transition-all duration-700 group-hover:tracking-normal"
+        style={{
+          fontFamily: "Syncopate, sans-serif",
+          fontSize: "clamp(1.5rem, 3vw, 5rem)",
+        }}
+      >
+        {workData[nextCategory]?.title} →
+      </h2>
+      <div className="h-[1px] w-0 group-hover:w-full bg-white mx-auto transition-all duration-1000 mt-4" />
+    </Link>
+  )}
+</footer>
     </div>
   );
 };
