@@ -442,7 +442,7 @@ const WorkGallery = () => {
             images: [
               1,
             ],
-            pos: "50%",
+            pos: "70%",
           },
           {
             type: "grid3",
