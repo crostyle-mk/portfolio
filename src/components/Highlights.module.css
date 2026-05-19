@@ -1,6 +1,5 @@
 .arrowButton {
   position: absolute;
-  left: 6px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 100;
@@ -13,6 +12,12 @@
   transition: all 0.3s ease;
 }
 
+/* LEFT ARROW */
+.arrowButton {
+  left: 6px;
+}
+
+/* RIGHT ARROW */
 .rightArrow {
   left: auto;
   right: 6px;
@@ -23,6 +28,7 @@
   color: black;
 }
 
+/* CARD STATES */
 .card {
   position: absolute;
   inset: 0;

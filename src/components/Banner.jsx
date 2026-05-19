@@ -5,18 +5,17 @@ const Banner = () => {
   const [scrollY, setScrollY] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Detect mobile once + on resize
   useEffect(() => {
     const updateIsMobile = () => {
-      if (typeof window !== "undefined") {
-        setIsMobile(window.innerWidth < 768);
-      }
+      setIsMobile(window.innerWidth < 768);
     };
-
     updateIsMobile();
     window.addEventListener("resize", updateIsMobile);
     return () => window.removeEventListener("resize", updateIsMobile);
   }, []);
 
+  // Smooth parallax (desktop only)
   useEffect(() => {
     if (isMobile) return;
 
@@ -37,6 +36,7 @@ const Banner = () => {
 
   return (
     <section id="banner" className={styles.luxuryBanner}>
+      {/* BACKGROUND MEDIA */}
       <div
         className={styles.videoBackground}
         style={{
@@ -48,8 +48,9 @@ const Banner = () => {
             <img
               src="/assets/banner-mobile.jpg"
               alt="Cinematic mobile background"
-              fetchPriority="high"
               loading="eager"
+              fetchpriority="high"
+              decoding="async"
             />
             <div className={styles.videoOverlay}></div>
           </>
@@ -70,6 +71,7 @@ const Banner = () => {
         )}
       </div>
 
+      {/* CONTENT */}
       <div className={styles.contentWrapper}>
         <div className={`${styles.premiumBadge} ${styles.animateUp}`}>i am</div>
 
