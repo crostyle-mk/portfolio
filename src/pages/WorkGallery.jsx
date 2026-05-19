@@ -148,6 +148,9 @@ function Slide({ item, index, isCurrent, folder, prefix, pos, onNext }) {
   const isVideo = typeof item === "object" ? item.isVideo : false;
   const itemPos = typeof item === "object" && item.pos ? item.pos : pos;
 
+  // NEW: Extract caption safely
+  const caption = typeof item === "object" ? item.caption : null;
+
   const videoRef = useRef(null);
   const [containerRef, visible] = useVideoVisibility();
 
@@ -184,9 +187,26 @@ function Slide({ item, index, isCurrent, folder, prefix, pos, onNext }) {
           alt=""
         />
       )}
+
+{/* ⭐ CAPTION OVERLAY (only when slide is active and on desktop) */}
+{caption && isCurrent && (
+  <div className="hidden md:block absolute left-[4%] bottom-12 z-20 pointer-events-none">
+   <p
+  className="
+    text-white text-xs md:text-sm uppercase font-bold tracking-[0.4em] opacity-80
+    md:font-[Syncopate,sans-serif]
+  "
+  style={{ fontFamily: "system-ui, sans-serif" }} // mobile override
+>
+  {caption}
+</p>
+
+        </div>
+      )}
     </div>
   );
 }
+
 
 /* -----------------------------------------------------------
    WIDE SLIDESHOW ROW
@@ -206,6 +226,7 @@ const WideSlideshowRow = memo(({ images, activeIndex, folder, prefix, pos, onNex
               prefix={prefix}
               pos={pos}
               onNext={onNext}
+              caption={typeof item === "object" ? item.caption : null}
             />
           ))}
         </div>
@@ -381,7 +402,7 @@ function WideSlideshowController({ currentWork, layoutItem, categoryName }) {
       setActiveIndex((prev) => prev + 1);
     };
 
-    const timer = setInterval(tick, 2800);
+    const timer = setInterval(tick, 3000);
     return () => clearInterval(timer);
   }, [categoryName]);
 
@@ -442,7 +463,7 @@ const WorkGallery = () => {
             images: [
               1,
             ],
-            pos: "70%",
+            pos: "60%",
           },
           {
             type: "grid3",
@@ -456,7 +477,8 @@ const WorkGallery = () => {
           {
             type: "wideSlideshow",
             images: [
-              13, 
+              { id: 13, caption: "Fashion show" },
+              { id: 17, pos: "20%", caption: "Nemara group" },
             ],
           },
            {
@@ -506,7 +528,11 @@ const WorkGallery = () => {
         layout: [
           {
             type: "wideSlideshow",
-            images: [1, 22, 23, 24],
+            images: [1, 
+               {id: 22, caption: "gulfood" }, 
+               {id: 23, caption: "gulfood"},
+               {id: 24, caption: "gulfood"}
+              ],
             pos: "50%",
           },
           {
