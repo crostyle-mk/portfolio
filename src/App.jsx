@@ -60,13 +60,13 @@ function App() {
             <Route
               path="/"
               element={
-                <main>
+                <main className="flex flex-col">
                   <Banner />
-                  <About />
+                  <div className="order-5 md:order-none"><About /></div>
                   <Hero />
                   <Category />
                   <Highlights /> {/* <-- Make sure this has id="highlights" */}
-                  <Contact />
+                  <div className="order-6 md:order-none"><Contact /></div>
                 </main>
               }
             />

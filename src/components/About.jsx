@@ -27,7 +27,7 @@ const About = () => {
     <section
       id="about"
       ref={sectionRef}
-      className={`${styles.aboutContainer} ${isVisible ? styles.isVisible : ""}`}
+      className={`${styles.aboutContainer} ${isVisible ? styles.isVisible : ""} mobileAbout`}
     >
       <div className={styles.aboutBackground} aria-hidden="true">
         <img src="/assets/poster.webp" alt="" />
