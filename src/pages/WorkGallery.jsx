@@ -505,8 +505,8 @@ const WorkGallery = () => {
             type: "grid3",
             ids: [
               [4, 9],
-              [3, 2],
-              [10, 8],
+              [10, 2],
+              [3, 8],
             ],
             mobileIds: [4, 8, 9, 10, 2, 3],
           },
@@ -516,6 +516,7 @@ const WorkGallery = () => {
               { id: 5, pos: "center" },
               { id: 6, pos: "center" },
               { id: 7, pos: "center" },
+              { id: 11, pos: "center" },
             ],
           },
         ],
@@ -539,7 +540,7 @@ const WorkGallery = () => {
             type: "grid3",
             ids: [
               [2, 7, 13],
-              [8, 11, 14],
+              [3, 11, 14],
               [4,12, 15],
             ],
             mobileIds: [
