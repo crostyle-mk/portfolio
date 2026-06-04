@@ -478,15 +478,18 @@ const WorkGallery = () => {
             type: "wideSlideshow",
             images: [
               { id: 13, caption: "Fashion show" },
-              { id: 17, pos: "20%", caption: "Nemara group" },
+              { id: 17, pos: "20%", caption: "..." },
             ],
           },
            {
             type: "grid3",
             ids: [
-              [14], [15], [16]
+              [14, 19, 21],
+              [15, 18, 20],
+              [16, 23, 22],
+
             ],
-            mobileIds: [14, 15, 16],
+            mobileIds: [14, 15, 16, 19, 18, 23, 21, 20, 22],
           },
         ],
       },

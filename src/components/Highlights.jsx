@@ -15,12 +15,15 @@ const Highlights = () => {
   }, []);
 
   const images = [
+    { id: "h7", src: "h7.jpg", format: "portrait" },
     { id: "h1", src: "h1.jpg", format: "portrait" },
     { id: "h2", src: "h2.jpg", format: "portrait" },
     { id: "h3", src: "h3.jpg", format: "landscape" },
     { id: "h4", src: "h6.jpg", format: "portrait" },
     { id: "h5", src: "h5.jpg", format: "landscape" },
     { id: "h4", src: "h4.jpg", format: "portrait" },
+    { id: "h8", src: "h8.jpg", format: "portrait" },
+    { id: "h9", src: "h9.jpg", format: "portrait" },
   ];
 
   const scroll = (direction) => {
