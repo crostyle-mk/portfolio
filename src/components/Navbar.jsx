@@ -38,7 +38,7 @@ const Navbar = () => {
       <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}>
         <div className={styles.navbarInner}>
           <a href="#banner" className={styles.navbarLogo}>
-            crostyle <span>.mk</span>
+            crostyle.mk
           </a>
 
           <ul className={styles.navbarLinks}>
