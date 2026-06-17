@@ -479,14 +479,15 @@ const WorkGallery = () => {
             images: [
               { id: 13, caption: "Fashion show" },
               { id: 17, pos: "20%", caption: "..." },
+              { id: 24, pos: "24%", caption: "..." },
             ],
           },
            {
             type: "grid3",
             ids: [
               [14, 19, 21],
-              [15, 18, 20],
-              [16, 23, 22],
+              [15, 18, 22],
+              [16, 23, 20],
 
             ],
             mobileIds: [14, 15, 16, 19, 18, 23, 21, 20, 22],
