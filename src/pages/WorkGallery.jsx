@@ -249,8 +249,8 @@ const SlideshowRow = memo(({ images, folder, prefix }) => {
   }, [images.length]);
 
   return (
-    <div className="w-full flex justify-center mb-5 md:mb-16 px-[5%]">
-      <div className="relative overflow-hidden shadow-lg w-full aspect-video md:aspect-auto md:h-[80vh]" style={{ contain: "layout style paint" }}>
+    <div className="w-full flex justify-center mb-5 md:mb-16 px-0 md:px-[5%]">
+      <div className="relative overflow-hidden shadow-lg w-full h-[25vh] md:aspect-auto md:h-[80vh]" style={{ contain: "layout style paint" }}>
         {images.map((img, i) => {
           const isCurrent = i === localIndex;
 
