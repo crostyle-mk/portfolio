@@ -24,6 +24,35 @@ function useVideoVisibility() {
 
   return [ref, visible];
 }
+/* -----------------------------------------------------------
+   IN-VIEW ONCE HOOK (lightweight entrance animation trigger)
+----------------------------------------------------------- */
+function useInViewOnce(threshold = 0.2, resetKey) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    setInView(false); // reset so the animation can replay
+
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [threshold, resetKey]);
+
+  return [ref, inView];
+}
 
 /* -----------------------------------------------------------
    GRID3 ROW
@@ -449,6 +478,7 @@ const WorkGallery = () => {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
+ const [footerRef, footerInView] = useInViewOnce(0.15, categoryName);
 
   /* ---------------- DATA ---------------- */
   const workData = useMemo(
@@ -724,8 +754,13 @@ const WorkGallery = () => {
         })}
       </div>
 
-     {/* FOOTER */}
-<footer className="text-center px-[6%] mt-10 mb-10 md:mt-40 md:mb-32">
+    {/* FOOTER */}
+<footer
+  ref={footerRef}
+  className={`text-center px-[6%] mt-4 mb-10 md:mt-16 md:mb-32 ${
+    footerInView ? styles.footerVisible : styles.footerHidden
+  }`}
+>
   {nextCategory === "food" ? (
     /* Food category is disabled → send user to Highlights on Home */
     <Link to="/#highlights" className="group inline-block">
@@ -746,8 +781,8 @@ const WorkGallery = () => {
   ) : (
     /* Normal next category */
     <Link to={`/${nextCategory}`} className="group inline-block">
-      <p className="text-zinc-300 uppercase text-[6px] tracking-[0.50em] mb-1 md:text-[10px] md:tracking-[0.5em] md:mb-6">
-        Next Category
+      <p className="text-zinc-300 uppercase text-[6px] tracking-[0.50em] mb-1 md:text-[12px] md:tracking-[0.5em] md:mb-6">
+        Next
       </p>
       <h2
         className="text-3xl md:text-7xl font-bold uppercase tracking-tighter transition-all duration-700 group-hover:tracking-normal"
